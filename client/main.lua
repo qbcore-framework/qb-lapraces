@@ -126,11 +126,11 @@ function CreatorLoop()
             local PlayerVeh = GetVehiclePedIsIn(PlayerPed)
 
             if PlayerVeh ~= 0 then
-                if IsControlJustPressed(0, Keys["7"]) or IsDisabledControlJustPressed(0, Keys["7"]) then
+                if IsControlJustPressed(0, 161) or IsDisabledControlJustPressed(0, 161) then
                     AddCheckpoint()
                 end
 
-                if IsControlJustPressed(0, Keys["8"]) or IsDisabledControlJustPressed(0, Keys["8"]) then
+                if IsControlJustPressed(0, 162) or IsDisabledControlJustPressed(0, 162) then
                     if CreatorData.Checkpoints ~= nil and next(CreatorData.Checkpoints) ~= nil then
                         DeleteCheckpoint()
                     else
@@ -138,7 +138,7 @@ function CreatorLoop()
                     end
                 end
 
-                if IsControlJustPressed(0, Keys["K"]) or IsDisabledControlJustPressed(0, Keys["K"]) then
+                if IsControlJustPressed(0, 311) or IsDisabledControlJustPressed(0, 311) then
                     if CreatorData.Checkpoints ~= nil and #CreatorData.Checkpoints >= 2 then
                         SaveRace()
                     else
@@ -146,7 +146,7 @@ function CreatorLoop()
                     end
                 end
 
-                if IsControlJustPressed(0, Keys["]"]) or IsDisabledControlJustPressed(0, Keys["]"]) then
+                if IsControlJustPressed(0, 40) or IsDisabledControlJustPressed(0, 40) then
                     if CreatorData.TireDistance + 1.0 ~= 16.0 then
                         CreatorData.TireDistance = CreatorData.TireDistance + 1.0
                     else
@@ -154,7 +154,7 @@ function CreatorLoop()
                     end
                 end
 
-                if IsControlJustPressed(0, Keys["["]) or IsDisabledControlJustPressed(0, Keys["["]) then
+                if IsControlJustPressed(0, 39) or IsDisabledControlJustPressed(0, 39) then
                     if CreatorData.TireDistance - 1.0 ~= 1.0 then
                         CreatorData.TireDistance = CreatorData.TireDistance - 1.0
                     else
@@ -166,7 +166,7 @@ function CreatorLoop()
                 DrawText3Ds(coords.x, coords.y, coords.z, 'You must be in a vehicle')
             end
 
-            if IsControlJustPressed(0, Keys["9"]) or IsDisabledControlJustPressed(0, Keys["9"]) then
+            if IsControlJustPressed(0, 163) or IsDisabledControlJustPressed(0, 163) then
                 if not CreatorData.ConfirmDelete then
                     CreatorData.ConfirmDelete = true
                     QBCore.Functions.Notify('Press [9] again to confirm', 'error', 5000)
