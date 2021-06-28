@@ -9,7 +9,7 @@ LastRaces = {}
 NotFinished = {}
 
 Citizen.CreateThread(function()
-    QBCore.Functions.ExecuteSql(false, "SELECT * FROM `lapraces`", function(races)
+    exports.ghmattimysql:execute('SELECT * FROM lapraces', function(races)
         if races[1] ~= nil then
             for k, v in pairs(races) do
                 local Records = {}
@@ -99,7 +99,7 @@ AddEventHandler('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime,
                     [2] = Player.PlayerData.charinfo.lastname,
                 }
             }
-            QBCore.Functions.ExecuteSql(false, "UPDATE `lapraces` SET `records` = '"..json.encode(Races[RaceData.RaceId].Records).."' WHERE `raceid` = '"..RaceData.RaceId.."'")
+            exports.ghmattimysql:execute('UPDATE lapraces SET records=@records WHERE raceid=@raceid', {['@records'] = json.encode(Races[RaceData.RaceId].Records), ['@raceid'] = RaceData.RaceId})
             TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from '..RaceData.RaceName..' disconnected with a time of: '..SecondsToClock(BLap)..'!')
         end
     else
@@ -110,7 +110,7 @@ AddEventHandler('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime,
                 [2] = Player.PlayerData.charinfo.lastname,
             }
         }
-        QBCore.Functions.ExecuteSql(false, "UPDATE `lapraces` SET `records` = '"..json.encode(Races[RaceData.RaceId].Records).."' WHERE `raceid` = '"..RaceData.RaceId.."'")
+        exports.ghmattimysql:execute('UPDATE lapraces SET records=@records WHERE raceid=@raceid', {['@records'] = json.encode(Races[RaceData.RaceId].Records), ['@raceid'] = RaceData.RaceId})
         TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from '..RaceData.RaceName..' put down with a time of: '..SecondsToClock(BLap)..'!')
     end
     AvailableRaces[AvailableKey].RaceData = Races[RaceData.RaceId]
@@ -213,7 +213,7 @@ function HasOpenedRace(CitizenId)
 end
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(source, cb, RaceId)
-    QBCore.Functions.ExecuteSql(false, "SELECT * FROM `players` WHERE `citizenid` = '"..Races[RaceId].Creator.."'", function(result)
+    exports.ghmattimysql:execute('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = Races[RaceId].Creator}, function(result)
         if result[1] ~= nil then
             result[1].charinfo = json.decode(result[1].charinfo)
             cb(Races[RaceId], result[1])
@@ -488,7 +488,13 @@ AddEventHandler('qb-lapraces:server:SaveRace', function(RaceData)
         Racers = {},
         LastLeaderboard = {},
     }
-    QBCore.Functions.ExecuteSql(false, "INSERT INTO `lapraces` (`name`, `checkpoints`, `creator`, `distance`, `raceid`) VALUES ('"..RaceData.RaceName.."', '"..json.encode(Checkpoints).."', '"..Player.PlayerData.citizenid.."', '"..RaceData.RaceDistance.."', '"..GenerateRaceId().."')")
+    exports.ghmattimysql:execute('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (@name, @checkpoints, @creator, @distance, @raceid)', {
+        ['@name'] = RaceData.RaceName,
+        ['@checkpoints'] = json.encode(Checkpoints),
+        ['@creator'] = Player.PlayerData.citizenid,
+        ['@distance'] = RaceData.RaceDistance,
+        ['@raceid'] = GenerateRaceId()
+    })
 end)
 
 function GetRaceId(name)
