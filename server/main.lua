@@ -4,28 +4,27 @@ LastRaces = {}
 NotFinished = {}
 
 Citizen.CreateThread(function()
-    exports.ghmattimysql:execute('SELECT * FROM lapraces', function(races)
-        if races[1] ~= nil then
-            for k, v in pairs(races) do
-                local Records = {}
-                if v.records ~= nil then
-                    Records = json.decode(v.records)
-                end
-                Races[v.raceid] = {
-                    RaceName = v.name,
-                    Checkpoints = json.decode(v.checkpoints),
-                    Records = Records,
-                    Creator = v.creator,
-                    RaceId = v.raceid,
-                    Started = false,
-                    Waiting = false,
-                    Distance = v.distance,
-                    LastLeaderboard = {},
-                    Racers = {},
-                }
+    local races = exports.ghmattimysql:executeSync('SELECT * FROM lapraces')
+    if races[1] ~= nil then
+        for k, v in pairs(races) do
+            local Records = {}
+            if v.records ~= nil then
+                Records = json.decode(v.records)
             end
+            Races[v.raceid] = {
+                RaceName = v.name,
+                Checkpoints = json.decode(v.checkpoints),
+                Records = Records,
+                Creator = v.creator,
+                RaceId = v.raceid,
+                Started = false,
+                Waiting = false,
+                Distance = v.distance,
+                LastLeaderboard = {},
+                Racers = {},
+            }
         end
-    end)
+    end
 end)
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:GetRacingLeaderboards', function(source, cb)
@@ -208,19 +207,18 @@ function HasOpenedRace(CitizenId)
 end
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(source, cb, RaceId)
-    exports.ghmattimysql:execute('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = Races[RaceId].Creator}, function(result)
-        if result[1] ~= nil then
-            result[1].charinfo = json.decode(result[1].charinfo)
-            cb(Races[RaceId], result[1])
-        else
-            cb(Races[RaceId], {
-                charinfo = {
-                    firstname = "Unknown",
-                    lastname = "Unknown",
-                }
-            })
-        end
-    end)
+    local result = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = Races[RaceId].Creator})
+    if result[1] ~= nil then
+        result[1].charinfo = json.decode(result[1].charinfo)
+        cb(Races[RaceId], result[1])
+    else
+        cb(Races[RaceId], {
+            charinfo = {
+                firstname = "Unknown",
+                lastname = "Unknown",
+            }
+        })
+    end
 end)
 
 function GetOpenedRaceKey(RaceId)
