@@ -1,7 +1,7 @@
-Races = {}
-AvailableRaces = {}
-LastRaces = {}
-NotFinished = {}
+local Races = {}
+local AvailableRaces = {}
+local LastRaces = {}
+local NotFinished = {}
 
 Citizen.CreateThread(function()
     local races = exports.oxmysql:fetchSync('SELECT * FROM lapraces', {})
