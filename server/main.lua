@@ -4,7 +4,7 @@ LastRaces = {}
 NotFinished = {}
 
 Citizen.CreateThread(function()
-    local races = exports.ghmattimysql:executeSync('SELECT * FROM lapraces')
+    local races = exports.oxmysql:fetchSync('SELECT * FROM lapraces', {})
     if races[1] ~= nil then
         for k, v in pairs(races) do
             local Records = {}
@@ -93,7 +93,7 @@ AddEventHandler('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime,
                     [2] = Player.PlayerData.charinfo.lastname,
                 }
             }
-            exports.ghmattimysql:execute('UPDATE lapraces SET records=@records WHERE raceid=@raceid', {['@records'] = json.encode(Races[RaceData.RaceId].Records), ['@raceid'] = RaceData.RaceId})
+            exports.oxmysql:execute('UPDATE lapraces SET records=@records WHERE raceid=@raceid', {['@records'] = json.encode(Races[RaceData.RaceId].Records), ['@raceid'] = RaceData.RaceId})
             TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from '..RaceData.RaceName..' disconnected with a time of: '..SecondsToClock(BLap)..'!')
         end
     else
@@ -104,7 +104,7 @@ AddEventHandler('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime,
                 [2] = Player.PlayerData.charinfo.lastname,
             }
         }
-        exports.ghmattimysql:execute('UPDATE lapraces SET records=@records WHERE raceid=@raceid', {['@records'] = json.encode(Races[RaceData.RaceId].Records), ['@raceid'] = RaceData.RaceId})
+        exports.oxmysql:execute('UPDATE lapraces SET records=@records WHERE raceid=@raceid', {['@records'] = json.encode(Races[RaceData.RaceId].Records), ['@raceid'] = RaceData.RaceId})
         TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from '..RaceData.RaceName..' put down with a time of: '..SecondsToClock(BLap)..'!')
     end
     AvailableRaces[AvailableKey].RaceData = Races[RaceData.RaceId]
@@ -207,7 +207,7 @@ function HasOpenedRace(CitizenId)
 end
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(source, cb, RaceId)
-    local result = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = Races[RaceId].Creator})
+    local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = Races[RaceId].Creator})
     if result[1] ~= nil then
         result[1].charinfo = json.decode(result[1].charinfo)
         cb(Races[RaceId], result[1])
@@ -481,7 +481,7 @@ AddEventHandler('qb-lapraces:server:SaveRace', function(RaceData)
         Racers = {},
         LastLeaderboard = {},
     }
-    exports.ghmattimysql:execute('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (@name, @checkpoints, @creator, @distance, @raceid)', {
+    exports.oxmysql:insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (@name, @checkpoints, @creator, @distance, @raceid)', {
         ['@name'] = RaceData.RaceName,
         ['@checkpoints'] = json.encode(Checkpoints),
         ['@creator'] = Player.PlayerData.citizenid,
