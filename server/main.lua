@@ -21,7 +21,7 @@ Citizen.CreateThread(function()
                 Waiting = false,
                 Distance = v.distance,
                 LastLeaderboard = {},
-                Racers = {},
+                Racers = {}
             }
         end
     end
@@ -37,10 +37,10 @@ function SecondsToClock(seconds)
     if seconds <= 0 then
         retval = "00:00:00";
     else
-        hours = string.format("%02.f", math.floor(seconds/3600));
-        mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
-        secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
-        retval = hours..":"..mins..":"..secs
+        hours = string.format("%02.f", math.floor(seconds / 3600));
+        mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
+        secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
+        retval = hours .. ":" .. mins .. ":" .. secs
     end
     return retval
 end
@@ -89,28 +89,33 @@ AddEventHandler('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime,
             Races[RaceData.RaceId].Records = {
                 Time = BLap,
                 Holder = {
-                    [1] = Player.PlayerData.charinfo.firstname, 
-                    [2] = Player.PlayerData.charinfo.lastname,
+                    [1] = Player.PlayerData.charinfo.firstname,
+                    [2] = Player.PlayerData.charinfo.lastname
                 }
             }
-            exports.oxmysql:execute('UPDATE lapraces SET records=@records WHERE raceid=@raceid', {['@records'] = json.encode(Races[RaceData.RaceId].Records), ['@raceid'] = RaceData.RaceId})
-            TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from '..RaceData.RaceName..' disconnected with a time of: '..SecondsToClock(BLap)..'!')
+            exports.oxmysql:execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
+                {json.encode(Races[RaceData.RaceId].Records), RaceData.RaceId})
+            TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
+                ' disconnected with a time of: ' .. SecondsToClock(BLap) .. '!')
         end
     else
         Races[RaceData.RaceId].Records = {
             Time = BLap,
             Holder = {
                 [1] = Player.PlayerData.charinfo.firstname,
-                [2] = Player.PlayerData.charinfo.lastname,
+                [2] = Player.PlayerData.charinfo.lastname
             }
         }
-        exports.oxmysql:execute('UPDATE lapraces SET records=@records WHERE raceid=@raceid', {['@records'] = json.encode(Races[RaceData.RaceId].Records), ['@raceid'] = RaceData.RaceId})
-        TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from '..RaceData.RaceName..' put down with a time of: '..SecondsToClock(BLap)..'!')
+        exports.oxmysql:execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
+            {json.encode(Races[RaceData.RaceId].Records), RaceData.RaceId})
+        TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
+            ' put down with a time of: ' .. SecondsToClock(BLap) .. '!')
     end
     AvailableRaces[AvailableKey].RaceData = Races[RaceData.RaceId]
     TriggerClientEvent('qb-lapraces:client:PlayerFinishs', -1, RaceData.RaceId, PlayersFinished, Player)
     if PlayersFinished == AmountOfRacers then
-        if NotFinished ~= nil and next(NotFinished) ~= nil and NotFinished[RaceData.RaceId] ~= nil and next(NotFinished[RaceData.RaceId]) ~= nil then
+        if NotFinished ~= nil and next(NotFinished) ~= nil and NotFinished[RaceData.RaceId] ~= nil and
+            next(NotFinished[RaceData.RaceId]) ~= nil then
             for k, v in pairs(NotFinished[RaceData.RaceId]) do
                 table.insert(LastRaces[RaceData.RaceId], {
                     TotalTime = v.TotalTime,
@@ -151,7 +156,7 @@ end
 
 function IsNameAvailable(RaceName)
     local retval = true
-    for RaceId,_ in pairs(Races) do
+    for RaceId, _ in pairs(Races) do
         if Races[RaceId].RaceName == RaceName then
             retval = false
             break
@@ -164,7 +169,7 @@ RegisterServerEvent('qb-lapraces:server:CreateLapRace')
 AddEventHandler('qb-lapraces:server:CreateLapRace', function(RaceName)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    
+
     if IsWhitelisted(Player.PlayerData.citizenid) then
         if IsNameAvailable(RaceName) then
             TriggerClientEvent('qb-lapraces:client:StartRaceEditor', source, RaceName)
@@ -207,7 +212,7 @@ function HasOpenedRace(CitizenId)
 end
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(source, cb, RaceId)
-    local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = Races[RaceId].Creator})
+    local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
     if result[1] ~= nil then
         result[1].charinfo = json.decode(result[1].charinfo)
         cb(Races[RaceId], result[1])
@@ -215,7 +220,7 @@ QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(sour
         cb(Races[RaceId], {
             charinfo = {
                 firstname = "Unknown",
-                lastname = "Unknown",
+                lastname = "Unknown"
             }
         })
     end
@@ -234,8 +239,8 @@ end
 
 function GetCurrentRace(MyCitizenId)
     local retval = nil
-    for RaceId,_ in pairs(Races) do
-        for cid,_ in pairs(Races[RaceId].Racers) do
+    for RaceId, _ in pairs(Races) do
+        for cid, _ in pairs(Races[RaceId].Racers) do
             if cid == MyCitizenId then
                 retval = RaceId
                 break
@@ -277,14 +282,17 @@ AddEventHandler('qb-lapraces:server:JoinRace', function(RaceData)
     Races[RaceId].Racers[Player.PlayerData.citizenid] = {
         Checkpoint = 0,
         Lap = 1,
-        Finished = false,
+        Finished = false
     }
     AvailableRaces[AvailableKey].RaceData = Races[RaceId]
     TriggerClientEvent('qb-lapraces:client:JoinRace', src, Races[RaceId], RaceData.Laps)
     TriggerClientEvent('qb-phone:client:UpdateLapraces', -1)
-    local creatorsource = QBCore.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData.source
+    local creatorsource = QBCore.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData
+                              .source
     if creatorsource ~= Player.PlayerData.source then
-        TriggerClientEvent('qb-phone:client:RaceNotify', creatorsource, string.sub(Player.PlayerData.charinfo.firstname, 1, 1)..'. '..Player.PlayerData.charinfo.lastname..' the race has been joined!')
+        TriggerClientEvent('qb-phone:client:RaceNotify', creatorsource,
+            string.sub(Player.PlayerData.charinfo.firstname, 1, 1) .. '. ' .. Player.PlayerData.charinfo.lastname ..
+                ' the race has been joined!')
     end
 end)
 
@@ -300,9 +308,12 @@ AddEventHandler('qb-lapraces:server:LeaveRace', function(RaceData)
     end
     local RaceId = GetRaceId(RaceName)
     local AvailableKey = GetOpenedRaceKey(RaceData.RaceId)
-    local creatorsource = QBCore.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData.source
+    local creatorsource = QBCore.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData
+                              .source
     if creatorsource ~= Player.PlayerData.source then
-        TriggerClientEvent('qb-phone:client:RaceNotify', creatorsource, string.sub(Player.PlayerData.charinfo.firstname, 1, 1)..'. '..Player.PlayerData.charinfo.lastname..' the race has been delivered!')
+        TriggerClientEvent('qb-phone:client:RaceNotify', creatorsource,
+            string.sub(Player.PlayerData.charinfo.firstname, 1, 1) .. '. ' .. Player.PlayerData.charinfo.lastname ..
+                ' the race has been delivered!')
     end
     local AmountOfRacers = 0
     for k, v in pairs(Races[RaceData.RaceId].Racers) do
@@ -330,7 +341,8 @@ AddEventHandler('qb-lapraces:server:LeaveRace', function(RaceData)
     end
     Races[RaceId].Racers[Player.PlayerData.citizenid] = nil
     if (AmountOfRacers - 1) == 0 then
-        if NotFinished ~= nil and next(NotFinished) ~= nil and NotFinished[RaceId] ~= nil and next(NotFinished[RaceId]) ~= nil then
+        if NotFinished ~= nil and next(NotFinished) ~= nil and NotFinished[RaceId] ~= nil and next(NotFinished[RaceId]) ~=
+            nil then
             for k, v in pairs(NotFinished[RaceId]) do
                 if LastRaces[RaceId] ~= nil then
                     table.insert(LastRaces[RaceId], {
@@ -381,16 +393,17 @@ AddEventHandler('qb-lapraces:server:SetupRace', function(RaceId, Laps)
                     RaceData = Races[RaceId],
                     Laps = Laps,
                     RaceId = RaceId,
-                    SetupCitizenId = Player.PlayerData.citizenid,
+                    SetupCitizenId = Player.PlayerData.citizenid
                 })
                 TriggerClientEvent('qb-phone:client:UpdateLapraces', -1)
                 SetTimeout(5 * 60 * 1000, function()
                     if Races[RaceId].Waiting then
                         local AvailableKey = GetOpenedRaceKey(RaceId)
-                        for cid,_ in pairs(Races[RaceId].Racers) do
+                        for cid, _ in pairs(Races[RaceId].Racers) do
                             local RacerData = QBCore.Functions.GetPlayerByCitizenId(cid)
                             if RacerData ~= nil then
-                                TriggerClientEvent('qb-lapraces:client:LeaveRace', RacerData.PlayerData.source, Races[RaceId])
+                                TriggerClientEvent('qb-lapraces:client:LeaveRace', RacerData.PlayerData.source,
+                                    Races[RaceId])
                             end
                         end
                         table.remove(AvailableRaces, AvailableKey)
@@ -437,12 +450,12 @@ AddEventHandler('qb-lapraces:server:StartRace', function(RaceId)
     local src = source
     local MyPlayer = QBCore.Functions.GetPlayer(src)
     local AvailableKey = GetOpenedRaceKey(RaceId)
-    
+
     if RaceId ~= nil then
         if AvailableRaces[AvailableKey].SetupCitizenId == MyPlayer.PlayerData.citizenid then
             AvailableRaces[AvailableKey].RaceData.Started = true
             AvailableRaces[AvailableKey].RaceData.Waiting = false
-            for CitizenId,_ in pairs(Races[RaceId].Racers) do
+            for CitizenId, _ in pairs(Races[RaceId].Racers) do
                 local Player = QBCore.Functions.GetPlayerByCitizenId(CitizenId)
                 if Player ~= nil then
                     TriggerClientEvent('qb-lapraces:client:RaceCountdown', Player.PlayerData.source)
@@ -466,7 +479,7 @@ AddEventHandler('qb-lapraces:server:SaveRace', function(RaceData)
     for k, v in pairs(RaceData.Checkpoints) do
         Checkpoints[k] = {
             offset = v.offset,
-            coords = v.coords,
+            coords = v.coords
         }
     end
     Races[RaceId] = {
@@ -479,15 +492,11 @@ AddEventHandler('qb-lapraces:server:SaveRace', function(RaceData)
         Waiting = false,
         Distance = math.ceil(RaceData.RaceDistance),
         Racers = {},
-        LastLeaderboard = {},
+        LastLeaderboard = {}
     }
-    exports.oxmysql:insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (@name, @checkpoints, @creator, @distance, @raceid)', {
-        ['@name'] = RaceData.RaceName,
-        ['@checkpoints'] = json.encode(Checkpoints),
-        ['@creator'] = Player.PlayerData.citizenid,
-        ['@distance'] = RaceData.RaceDistance,
-        ['@raceid'] = GenerateRaceId()
-    })
+    exports.oxmysql:insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (?)',
+        {RaceData.RaceName, json.encode(Checkpoints), Player.PlayerData.citizenid, RaceData.RaceDistance,
+         GenerateRaceId()})
 end)
 
 function GetRaceId(name)
@@ -502,9 +511,9 @@ function GetRaceId(name)
 end
 
 function GenerateRaceId()
-    local RaceId = "LR-"..math.random(1111, 9999)
+    local RaceId = "LR-" .. math.random(1111, 9999)
     while Races[RaceId] ~= nil do
-        RaceId = "LR-"..math.random(1111, 9999)
+        RaceId = "LR-" .. math.random(1111, 9999)
     end
     return RaceId
 end
@@ -533,7 +542,7 @@ QBCore.Commands.Add("cancelrace", "Cancel going race..", {}, false, function(sou
             local RaceId = GetRaceId(RaceName)
             if Races[RaceId].Started then
                 local AvailableKey = GetOpenedRaceKey(RaceId)
-                for cid,_ in pairs(Races[RaceId].Racers) do
+                for cid, _ in pairs(Races[RaceId].Racers) do
                     local RacerData = QBCore.Functions.GetPlayerByCitizenId(cid)
                     if RacerData ~= nil then
                         TriggerClientEvent('qb-lapraces:client:LeaveRace', RacerData.PlayerData.source, Races[RaceId])
