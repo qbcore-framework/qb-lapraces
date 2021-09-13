@@ -494,7 +494,7 @@ AddEventHandler('qb-lapraces:server:SaveRace', function(RaceData)
         Racers = {},
         LastLeaderboard = {}
     }
-    exports.oxmysql:insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (?)',
+    exports.oxmysql:insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (?, ?, ?, ?, ?)',
         {RaceData.RaceName, json.encode(Checkpoints), Player.PlayerData.citizenid, RaceData.RaceDistance,
          GenerateRaceId()})
 end)
