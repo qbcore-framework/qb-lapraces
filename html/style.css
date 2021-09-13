@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
+
 body {
     margin: 0;
     padding: 0;
@@ -5,11 +7,6 @@ body {
 
 :root {
     --main-font-size: 2vh;  
-}
-
-@font-face {
-    font-family: 'RacingFont';
-    src: url('./fonts/keepcalm.otf');
 }
 
 .container {
@@ -34,7 +31,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 2vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -44,7 +41,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 5vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -54,7 +51,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 8vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -64,7 +61,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 11vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -74,7 +71,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 14vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -84,7 +81,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 17vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -94,7 +91,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 20vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -110,7 +107,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 2vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -120,7 +117,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 5vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -130,7 +127,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 8vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -140,7 +137,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 11vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -150,7 +147,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 14vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
@@ -160,7 +157,7 @@ body {
     position: absolute;
     left: 2vh;
     top: 17vh;
-    font-family: 'RacingFont';
+    font-family: 'Poppins', sans-serif;
     font-size: var(--main-font-size);
     color: white;
     text-shadow: 1px 1px 0px #000000;
