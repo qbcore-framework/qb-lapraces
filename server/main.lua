@@ -4,7 +4,7 @@ local LastRaces = {}
 local NotFinished = {}
 
 Citizen.CreateThread(function()
-    local races = exports.oxmysql:fetchSync('SELECT * FROM lapraces', {})
+    local races = exports.oxmysql:executeSync('SELECT * FROM lapraces', {})
     if races[1] ~= nil then
         for k, v in pairs(races) do
             local Records = {}
@@ -212,7 +212,7 @@ function HasOpenedRace(CitizenId)
 end
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(source, cb, RaceId)
-    local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
+    local result = exports.oxmysql:executeSync('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
     if result[1] ~= nil then
         result[1].charinfo = json.decode(result[1].charinfo)
         cb(Races[RaceId], result[1])
