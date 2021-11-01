@@ -171,7 +171,7 @@ function CreatorLoop()
                     for id,_ in pairs(CreatorData.Checkpoints) do
                         if CreatorData.Checkpoints[id].pileleft ~= nil then
                             local coords = CreatorData.Checkpoints[id].offset.left
-                            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 8.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 8.0, `prop_offroad_tyres02`, 0, 0, 0)
                             DeleteObject(Obj)
                             ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                             CreatorData.Checkpoints[id].pileleft = nil
@@ -179,7 +179,7 @@ function CreatorLoop()
 
                         if CreatorData.Checkpoints[id].pileright ~= nil then
                             local coords = CreatorData.Checkpoints[id].offset.right
-                            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 8.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 8.0, `prop_offroad_tyres02`, 0, 0, 0)
                             DeleteObject(Obj)
                             ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                             CreatorData.Checkpoints[id].pileright = nil
@@ -222,14 +222,14 @@ function SaveRace()
         if CreatorData.Checkpoints[id] ~= nil then
             if CreatorData.Checkpoints[id].pileleft ~= nil then
                 local coords = CreatorData.Checkpoints[id].offset.left
-                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
                 DeleteObject(Obj)
                 ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                 CreatorData.Checkpoints[id].pileleft = nil
             end
             if CreatorData.Checkpoints[id].pileright ~= nil then
                 local coords = CreatorData.Checkpoints[id].offset.right
-                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
                 DeleteObject(Obj)
                 ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                 CreatorData.Checkpoints[id].pileright = nil
@@ -299,14 +299,14 @@ function DeleteCheckpoint()
             end
             if CreatorData.Checkpoints[RaceData.ClosestCheckpoint].pileleft ~= nil then
                 local coords = CreatorData.Checkpoints[RaceData.ClosestCheckpoint].offset.left
-                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
                 DeleteObject(Obj)
                 ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                 CreatorData.Checkpoints[RaceData.ClosestCheckpoint].pileleft = nil
             end
             if CreatorData.Checkpoints[RaceData.ClosestCheckpoint].pileright ~= nil then
                 local coords = CreatorData.Checkpoints[RaceData.ClosestCheckpoint].offset.right
-                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
                 DeleteObject(Obj)
                 ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                 CreatorData.Checkpoints[RaceData.ClosestCheckpoint].pileright = nil
@@ -365,7 +365,7 @@ function SetupPiles()
     for k, v in pairs(CreatorData.Checkpoints) do
         if CreatorData.Checkpoints[k].pileleft == nil then
             ClearAreaOfObjects(v.offset.left.x, v.offset.left.y, v.offset.left.z, 50.0, 0)
-            CreatorData.Checkpoints[k].pileleft = CreateObject(GetHashKey("prop_offroad_tyres02"), v.offset.left.x, v.offset.left.y, v.offset.left.z, 0, 0, 0)
+            CreatorData.Checkpoints[k].pileleft = CreateObject(`prop_offroad_tyres02`, v.offset.left.x, v.offset.left.y, v.offset.left.z, 0, 0, 0)
             PlaceObjectOnGroundProperly(CreatorData.Checkpoints[k].pileleft)
             FreezeEntityPosition(CreatorData.Checkpoints[k].pileleft, 1)
             SetEntityAsMissionEntity(CreatorData.Checkpoints[k].pileleft, 1, 1)
@@ -373,7 +373,7 @@ function SetupPiles()
 
         if CreatorData.Checkpoints[k].pileright == nil then
             ClearAreaOfObjects(v.offset.right.x, v.offset.right.y, v.offset.right.z, 50.0, 0)
-            CreatorData.Checkpoints[k].pileright = CreateObject(GetHashKey("prop_offroad_tyres02"), v.offset.right.x, v.offset.right.y, v.offset.right.z, 0, 0, 0)
+            CreatorData.Checkpoints[k].pileright = CreateObject(`prop_offroad_tyres02`, v.offset.right.x, v.offset.right.y, v.offset.right.z, 0, 0, 0)
             PlaceObjectOnGroundProperly(CreatorData.Checkpoints[k].pileright)
             FreezeEntityPosition(CreatorData.Checkpoints[k].pileleft, 1)
             SetEntityAsMissionEntity(CreatorData.Checkpoints[k].pileleft, 1, 1)
@@ -386,14 +386,14 @@ AddEventHandler('onResourceStop', function(resource)
         for k, v in pairs(CreatorData.Checkpoints) do
             if CreatorData.Checkpoints[k].pileleft ~= nil then
                 local coords = CreatorData.Checkpoints[k].offset.right
-                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
                 DeleteObject(Obj)
                 ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                 CreatorData.Checkpoints[k].pileright = nil
             end
             if CreatorData.Checkpoints[k].pileright ~= nil then
                 local coords = CreatorData.Checkpoints[k].offset.right
-                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
                 DeleteObject(Obj)
                 ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                 CreatorData.Checkpoints[k].pileright = nil
@@ -404,14 +404,14 @@ AddEventHandler('onResourceStop', function(resource)
             if CurrentRaceData.Checkpoints[k] ~= nil then
                 if CurrentRaceData.Checkpoints[k].pileleft ~= nil then
                     local coords = CurrentRaceData.Checkpoints[k].offset.right
-                    local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                    local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
                     DeleteObject(Obj)
                     ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                     CurrentRaceData.Checkpoints[k].pileright = nil
                 end
                 if CurrentRaceData.Checkpoints[k].pileright ~= nil then
                     local coords = CurrentRaceData.Checkpoints[k].offset.right
-                    local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+                    local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
                     DeleteObject(Obj)
                     ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
                     CurrentRaceData.Checkpoints[k].pileright = nil
@@ -442,14 +442,14 @@ AddEventHandler('qb-lapraces:client:LeaveRace', function(data)
         end
         if CurrentRaceData.Checkpoints[k].pileleft ~= nil then
             local coords = CurrentRaceData.Checkpoints[k].offset.left
-            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
             DeleteObject(Obj)
             ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
             CurrentRaceData.Checkpoints[k].pileleft = nil
         end
         if CurrentRaceData.Checkpoints[k].pileright ~= nil then
             local coords = CurrentRaceData.Checkpoints[k].offset.right
-            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
             DeleteObject(Obj)
             ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
             CurrentRaceData.Checkpoints[k].pileright = nil
@@ -536,13 +536,13 @@ function SetupRace(RaceData, Laps)
 
     for k, v in pairs(CurrentRaceData.Checkpoints) do
         ClearAreaOfObjects(v.offset.left.x, v.offset.left.y, v.offset.left.z, 50.0, 0)
-        CurrentRaceData.Checkpoints[k].pileleft = CreateObject(GetHashKey("prop_offroad_tyres02"), v.offset.left.x, v.offset.left.y, v.offset.left.z, 0, 0, 0)
+        CurrentRaceData.Checkpoints[k].pileleft = CreateObject(`prop_offroad_tyres02`, v.offset.left.x, v.offset.left.y, v.offset.left.z, 0, 0, 0)
         PlaceObjectOnGroundProperly(CurrentRaceData.Checkpoints[k].pileleft)
         FreezeEntityPosition(CurrentRaceData.Checkpoints[k].pileleft, 1)
         SetEntityAsMissionEntity(CurrentRaceData.Checkpoints[k].pileleft, 1, 1)
 
         ClearAreaOfObjects(v.offset.right.x, v.offset.right.y, v.offset.right.z, 50.0, 0)
-        CurrentRaceData.Checkpoints[k].pileright = CreateObject(GetHashKey("prop_offroad_tyres02"), v.offset.right.x, v.offset.right.y, v.offset.right.z, 0, 0, 0)
+        CurrentRaceData.Checkpoints[k].pileright = CreateObject(`prop_offroad_tyres02`, v.offset.right.x, v.offset.right.y, v.offset.right.z, 0, 0, 0)
         PlaceObjectOnGroundProperly(CurrentRaceData.Checkpoints[k].pileright)
         FreezeEntityPosition(CurrentRaceData.Checkpoints[k].pileright, 1)
         SetEntityAsMissionEntity(CurrentRaceData.Checkpoints[k].pileright, 1, 1)
@@ -759,14 +759,14 @@ function FinishRace()
         end
         if CurrentRaceData.Checkpoints[k].pileleft ~= nil then
             local coords = CurrentRaceData.Checkpoints[k].offset.left
-            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
             DeleteObject(Obj)
             ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
             CurrentRaceData.Checkpoints[k].pileleft = nil
         end
         if CurrentRaceData.Checkpoints[k].pileright ~= nil then
             local coords = CurrentRaceData.Checkpoints[k].offset.right
-            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, GetHashKey("prop_offroad_tyres02"), 0, 0, 0)
+            local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 5.0, `prop_offroad_tyres02`, 0, 0, 0)
             DeleteObject(Obj)
             ClearAreaOfObjects(coords.x, coords.y, coords.z, 50.0, 0)
             CurrentRaceData.Checkpoints[k].pileright = nil
