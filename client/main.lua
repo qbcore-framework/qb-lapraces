@@ -48,7 +48,7 @@ AddEventHandler('qb-lapraces:client:StartRaceEditor', function(RaceName)
         CreatorLoop()
     else
         QBCore.Functions.Notify('You are already making a race.', 'error')
-    end 
+    end
 end)
 
 function DrawText3Ds(x, y, z, text)
@@ -259,14 +259,14 @@ function AddCheckpoint()
         }
     }
 
-    table.insert(CreatorData.Checkpoints, {
+    CreatorData.Checkpoints[#CreatorData.Checkpoints+1] {
         coords = {
             x = PlayerPos.x,
             y = PlayerPos.y,
             z = PlayerPos.z,
         },
         offset = Offset,
-    })
+    }
 
 
     for id, CheckpointData in pairs(CreatorData.Checkpoints) do
@@ -275,7 +275,7 @@ function AddCheckpoint()
         end
 
         CheckpointData.blip = AddBlipForCoord(CheckpointData.coords.x, CheckpointData.coords.y, CheckpointData.coords.z)
-        
+
         SetBlipSprite(CheckpointData.blip, 1)
         SetBlipDisplay(CheckpointData.blip, 4)
         SetBlipScale(CheckpointData.blip, 0.8)
@@ -314,7 +314,7 @@ function DeleteCheckpoint()
 
             for id, data in pairs(CreatorData.Checkpoints) do
                 if id ~= RaceData.ClosestCheckpoint then
-                    table.insert(NewCheckpoints, data)
+                    NewCheckpoints[#NewCheckpoints+1] = data
                 end
             end
             CreatorData.Checkpoints = NewCheckpoints

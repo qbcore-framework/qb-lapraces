@@ -65,24 +65,24 @@ AddEventHandler('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime,
         BLap = BestLap
     end
     if LastRaces[RaceData.RaceId] ~= nil then
-        table.insert(LastRaces[RaceData.RaceId], {
+        LastRaces[RaceData.RaceId][#LastRaces[RaceData.RaceId]+1] =  {
             TotalTime = TotalTime,
             BestLap = BLap,
             Holder = {
                 [1] = Player.PlayerData.charinfo.firstname,
                 [2] = Player.PlayerData.charinfo.lastname
             }
-        })
+        }
     else
         LastRaces[RaceData.RaceId] = {}
-        table.insert(LastRaces[RaceData.RaceId], {
+        LastRaces[RaceData.RaceId][#LastRaces[RaceData.RaceId]+1] =  {
             TotalTime = TotalTime,
             BestLap = BLap,
             Holder = {
                 [1] = Player.PlayerData.charinfo.firstname,
                 [2] = Player.PlayerData.charinfo.lastname
             }
-        })
+        }
     end
     if Races[RaceData.RaceId].Records ~= nil and next(Races[RaceData.RaceId].Records) ~= nil then
         if BLap < Races[RaceData.RaceId].Records.Time then
@@ -117,14 +117,14 @@ AddEventHandler('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime,
         if NotFinished ~= nil and next(NotFinished) ~= nil and NotFinished[RaceData.RaceId] ~= nil and
             next(NotFinished[RaceData.RaceId]) ~= nil then
             for k, v in pairs(NotFinished[RaceData.RaceId]) do
-                table.insert(LastRaces[RaceData.RaceId], {
+                LastRaces[RaceData.RaceId][#LastRaces[RaceData.RaceId]+1] = {
                     TotalTime = v.TotalTime,
                     BestLap = v.BestLap,
                     Holder = {
                         [1] = v.Holder[1],
                         [2] = v.Holder[2]
                     }
-                })
+                }
             end
         end
         Races[RaceData.RaceId].LastLeaderboard = LastRaces[RaceData.RaceId]
@@ -320,24 +320,24 @@ AddEventHandler('qb-lapraces:server:LeaveRace', function(RaceData)
         AmountOfRacers = AmountOfRacers + 1
     end
     if NotFinished[RaceData.RaceId] ~= nil then
-        table.insert(NotFinished[RaceData.RaceId], {
+        NotFinished[RaceData.RaceId][#NotFinished[RaceData.RaceId]+1] = {
             TotalTime = "DNF",
             BestLap = "DNF",
             Holder = {
                 [1] = Player.PlayerData.charinfo.firstname,
                 [2] = Player.PlayerData.charinfo.lastname
             }
-        })
+        }
     else
         NotFinished[RaceData.RaceId] = {}
-        table.insert(NotFinished[RaceData.RaceId], {
+        NotFinished[RaceData.RaceId][#NotFinished[RaceData.RaceId]+1] = {
             TotalTime = "DNF",
             BestLap = "DNF",
             Holder = {
                 [1] = Player.PlayerData.charinfo.firstname,
                 [2] = Player.PlayerData.charinfo.lastname
             }
-        })
+        }
     end
     Races[RaceId].Racers[Player.PlayerData.citizenid] = nil
     if (AmountOfRacers - 1) == 0 then
@@ -345,24 +345,24 @@ AddEventHandler('qb-lapraces:server:LeaveRace', function(RaceData)
             nil then
             for k, v in pairs(NotFinished[RaceId]) do
                 if LastRaces[RaceId] ~= nil then
-                    table.insert(LastRaces[RaceId], {
+                    LastRaces[RaceId][#LastRaces[RaceId]+1] = {
                         TotalTime = v.TotalTime,
                         BestLap = v.BestLap,
                         Holder = {
                             [1] = v.Holder[1],
                             [2] = v.Holder[2]
                         }
-                    })
+                    }
                 else
                     LastRaces[RaceId] = {}
-                    table.insert(LastRaces[RaceId], {
+                    LastRaces[RaceId][#LastRaces[RaceId]+1] = {
                         TotalTime = v.TotalTime,
                         BestLap = v.BestLap,
                         Holder = {
                             [1] = v.Holder[1],
                             [2] = v.Holder[2]
                         }
-                    })
+                    }
                 end
             end
         end
@@ -389,12 +389,12 @@ AddEventHandler('qb-lapraces:server:SetupRace', function(RaceId, Laps)
         if not Races[RaceId].Waiting then
             if not Races[RaceId].Started then
                 Races[RaceId].Waiting = true
-                table.insert(AvailableRaces, {
+                AvailableRaces[#AvailableRaces+1] = {
                     RaceData = Races[RaceId],
                     Laps = Laps,
                     RaceId = RaceId,
                     SetupCitizenId = Player.PlayerData.citizenid
-                })
+                }
                 TriggerClientEvent('qb-phone:client:UpdateLapraces', -1)
                 SetTimeout(5 * 60 * 1000, function()
                     if Races[RaceId].Waiting then
