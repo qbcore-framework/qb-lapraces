@@ -3,7 +3,7 @@ local AvailableRaces = {}
 local LastRaces = {}
 local NotFinished = {}
 
-Citizen.CreateThread(function()
+CreateThread(function()
     local races = exports.oxmysql:executeSync('SELECT * FROM lapraces', {})
     if races[1] ~= nil then
         for k, v in pairs(races) do
@@ -45,8 +45,7 @@ function SecondsToClock(seconds)
     return retval
 end
 
-RegisterServerEvent('qb-lapraces:server:FinishPlayer')
-AddEventHandler('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime, TotalLaps, BestLap)
+RegisterNetEvent('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime, TotalLaps, BestLap)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local AvailableKey = GetOpenedRaceKey(RaceData.RaceId)
@@ -165,8 +164,7 @@ function IsNameAvailable(RaceName)
     return retval
 end
 
-RegisterServerEvent('qb-lapraces:server:CreateLapRace')
-AddEventHandler('qb-lapraces:server:CreateLapRace', function(RaceName)
+RegisterNetEvent('qb-lapraces:server:CreateLapRace', function(RaceName)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
@@ -250,8 +248,7 @@ function GetCurrentRace(MyCitizenId)
     return retval
 end
 
-RegisterServerEvent('qb-lapraces:server:JoinRace')
-AddEventHandler('qb-lapraces:server:JoinRace', function(RaceData)
+RegisterNetEvent('qb-lapraces:server:JoinRace', function(RaceData)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local RaceName = RaceData.RaceData.RaceName
@@ -296,8 +293,7 @@ AddEventHandler('qb-lapraces:server:JoinRace', function(RaceData)
     end
 end)
 
-RegisterServerEvent('qb-lapraces:server:LeaveRace')
-AddEventHandler('qb-lapraces:server:LeaveRace', function(RaceData)
+RegisterNetEvent('qb-lapraces:server:LeaveRace', function(RaceData)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local RaceName
@@ -382,8 +378,7 @@ AddEventHandler('qb-lapraces:server:LeaveRace', function(RaceData)
     TriggerClientEvent('qb-phone:client:UpdateLapraces', -1)
 end)
 
-RegisterServerEvent('qb-lapraces:server:SetupRace')
-AddEventHandler('qb-lapraces:server:SetupRace', function(RaceId, Laps)
+RegisterNetEvent('qb-lapraces:server:SetupRace', function(RaceId, Laps)
     local Player = QBCore.Functions.GetPlayer(source)
     if Races[RaceId] ~= nil then
         if not Races[RaceId].Waiting then
@@ -426,14 +421,12 @@ AddEventHandler('qb-lapraces:server:SetupRace', function(RaceId, Laps)
     end
 end)
 
-RegisterServerEvent('qb-lapraces:server:UpdateRaceState')
-AddEventHandler('qb-lapraces:server:UpdateRaceState', function(RaceId, Started, Waiting)
+RegisterNetEvent('qb-lapraces:server:UpdateRaceState', function(RaceId, Started, Waiting)
     Races[RaceId].Waiting = Waiting
     Races[RaceId].Started = Started
 end)
 
-RegisterServerEvent('qb-lapraces:server:UpdateRacerData')
-AddEventHandler('qb-lapraces:server:UpdateRacerData', function(RaceId, Checkpoint, Lap, Finished)
+RegisterNetEvent('qb-lapraces:server:UpdateRacerData', function(RaceId, Checkpoint, Lap, Finished)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local CitizenId = Player.PlayerData.citizenid
@@ -445,8 +438,7 @@ AddEventHandler('qb-lapraces:server:UpdateRacerData', function(RaceId, Checkpoin
     TriggerClientEvent('qb-lapraces:client:UpdateRaceRacerData', -1, RaceId, Races[RaceId])
 end)
 
-RegisterServerEvent('qb-lapraces:server:StartRace')
-AddEventHandler('qb-lapraces:server:StartRace', function(RaceId)
+RegisterNetEvent('qb-lapraces:server:StartRace', function(RaceId)
     local src = source
     local MyPlayer = QBCore.Functions.GetPlayer(src)
     local AvailableKey = GetOpenedRaceKey(RaceId)
@@ -470,8 +462,7 @@ AddEventHandler('qb-lapraces:server:StartRace', function(RaceId)
     end
 end)
 
-RegisterServerEvent('qb-lapraces:server:SaveRace')
-AddEventHandler('qb-lapraces:server:SaveRace', function(RaceData)
+RegisterNetEvent('qb-lapraces:server:SaveRace', function(RaceData)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local RaceId = GenerateRaceId()
