@@ -39,8 +39,7 @@ function IsInEditor()
     return retval
 end
 
-RegisterNetEvent('qb-lapraces:client:StartRaceEditor')
-AddEventHandler('qb-lapraces:client:StartRaceEditor', function(RaceName)
+RegisterNetEvent('qb-lapraces:client:StartRaceEditor', function(RaceName)
     if not RaceData.InCreator then
         CreatorData.RaceName = RaceName
         RaceData.InCreator = true
@@ -85,7 +84,7 @@ function GetClosestCheckpoint()
 end
 
 function CreatorUI()
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while true do
             if RaceData.InCreator then
                 SendNUIMessage({
@@ -105,13 +104,13 @@ function CreatorUI()
                 })
                 break
             end
-            Citizen.Wait(200)
+            Wait(200)
         end
     end)
 end
 
 function CreatorLoop()
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while RaceData.InCreator do
             local PlayerPed = PlayerPedId()
             local PlayerVeh = GetVehiclePedIsIn(PlayerPed)
@@ -193,7 +192,7 @@ function CreatorLoop()
                     CreatorData.ConfirmDelete = false
                 end
             end
-            Citizen.Wait(3)
+            Wait(3)
         end
     end)
 end
@@ -326,14 +325,13 @@ function DeleteCheckpoint()
     end
 end
 
-RegisterNetEvent('qb-lapraces:client:UpdateRaceRacerData')
-AddEventHandler('qb-lapraces:client:UpdateRaceRacerData', function(RaceId, RaceData)
+RegisterNetEvent('qb-lapraces:client:UpdateRaceRacerData', function(RaceId, RaceData)
     if (CurrentRaceData.RaceId ~= nil) and CurrentRaceData.RaceId == RaceId then
         CurrentRaceData.Racers = RaceData.Racers
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         if RaceData.InCreator then
             local PlayerPed = PlayerPedId()
@@ -357,7 +355,7 @@ Citizen.CreateThread(function()
                 DrawText3Ds(Offset.right.x, Offset.right.y, Offset.right.z, 'Checkpoint R')
             end
         end
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
@@ -421,8 +419,7 @@ AddEventHandler('onResourceStop', function(resource)
     end
 end)
 
-RegisterNetEvent('qb-lapraces:client:JoinRace')
-AddEventHandler('qb-lapraces:client:JoinRace', function(Data, Laps)
+RegisterNetEvent('qb-lapraces:client:JoinRace', function(Data, Laps)
     if not RaceData.InRace then
         RaceData.InRace = true
         SetupRace(Data, Laps)
@@ -432,8 +429,7 @@ AddEventHandler('qb-lapraces:client:JoinRace', function(Data, Laps)
     end
 end)
 
-RegisterNetEvent('qb-lapraces:client:LeaveRace')
-AddEventHandler('qb-lapraces:client:LeaveRace', function(data)
+RegisterNetEvent('qb-lapraces:client:LeaveRace', function(data)
     QBCore.Functions.Notify('You have completed the race!')
     for k, v in pairs(CurrentRaceData.Checkpoints) do
         if CurrentRaceData.Checkpoints[k].blip ~= nil then
@@ -472,7 +468,7 @@ end)
 local FinishedUITimeout = false
 
 function RaceUI()
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while true do
             if CurrentRaceData.Checkpoints ~= nil and next(CurrentRaceData.Checkpoints) ~= nil then
                 if CurrentRaceData.Started then
@@ -512,7 +508,7 @@ function RaceUI()
                 end
                 break
             end
-            Citizen.Wait(12)
+            Wait(12)
         end
     end)
 end
@@ -565,7 +561,7 @@ end
 function showNonLoopParticle(dict, particleName, coords, scale, time)
     RequestNamedPtfxAsset(dict)
     while not HasNamedPtfxAssetLoaded(dict) do
-        Citizen.Wait(0)
+        Wait(0)
     end
     UseParticleFxAssetNextCall(dict)
     local particleHandle = StartParticleFxLoopedAtCoord(particleName, coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, scale, false, false, false)
@@ -587,8 +583,7 @@ function DoPilePfx()
     end
 end
 
-RegisterNetEvent('qb-lapraces:client:RaceCountdown')
-AddEventHandler('qb-lapraces:client:RaceCountdown', function()
+RegisterNetEvent('qb-lapraces:client:RaceCountdown', function()
     TriggerServerEvent('qb-lapraces:server:UpdateRaceState', CurrentRaceData.RaceId, true, false)
     if CurrentRaceData.RaceId ~= nil then
         while Countdown ~= 0 do
@@ -605,7 +600,7 @@ AddEventHandler('qb-lapraces:client:RaceCountdown', function()
             else
                 break
             end
-            Citizen.Wait(1000)
+            Wait(1000)
         end
         if CurrentRaceData.RaceName ~= nil then
             SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
@@ -643,7 +638,7 @@ function GetMaxDistance(OffsetCoords)
     return Retval
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 
         local ped = PlayerPedId()
@@ -724,10 +719,10 @@ Citizen.CreateThread(function()
                 DrawMarker(4, data.coords.x, data.coords.y, data.coords.z + 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, 1.5, 1.5, 255, 255, 255, 255, 0, 1, 0, 0, 0, 0, 0)
             end
         else
-            Citizen.Wait(1000)
+            Wait(1000)
         end
 
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
@@ -785,8 +780,7 @@ function FinishRace()
     RaceData.InRace = false
 end
 
-RegisterNetEvent('qb-lapraces:client:PlayerFinishs')
-AddEventHandler('qb-lapraces:client:PlayerFinishs', function(RaceId, Place, FinisherData)
+RegisterNetEvent('qb-lapraces:client:PlayerFinishs', function(RaceId, Place, FinisherData)
     if CurrentRaceData.RaceId ~= nil then
         if CurrentRaceData.RaceId == RaceId then
             QBCore.Functions.Notify(FinisherData.PlayerData.charinfo.firstname..' is finished on spot: '..Place, 'error', 3500)
@@ -794,22 +788,21 @@ AddEventHandler('qb-lapraces:client:PlayerFinishs', function(RaceId, Place, Fini
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         if RaceData.InCreator then
             GetClosestCheckpoint()
             SetupPiles()
         end
-        Citizen.Wait(1000)
+        Wait(1000)
     end
 end)
 
 local ToFarCountdown = 10
 
-RegisterNetEvent('qb-lapraces:client:WaitingDistanceCheck')
-AddEventHandler('qb-lapraces:client:WaitingDistanceCheck', function()
+RegisterNetEvent('qb-lapraces:client:WaitingDistanceCheck', function()
     Wait(1000)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while true do
             if not CurrentRaceData.Started then
                 local ped = PlayerPedId()
@@ -826,7 +819,7 @@ AddEventHandler('qb-lapraces:client:WaitingDistanceCheck', function()
                             ToFarCountdown = 10
                             break
                         end
-                        Citizen.Wait(1000)
+                        Wait(1000)
                     else
                         if ToFarCountdown ~= 10 then
                             ToFarCountdown = 10
@@ -836,7 +829,7 @@ AddEventHandler('qb-lapraces:client:WaitingDistanceCheck', function()
             else
                 break
             end
-            Citizen.Wait(3)
+            Wait(3)
         end
     end)
 end)
