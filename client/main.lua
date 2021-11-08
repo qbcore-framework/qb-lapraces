@@ -259,7 +259,7 @@ function AddCheckpoint()
         }
     }
 
-    CreatorData.Checkpoints[#CreatorData.Checkpoints+1] {
+    CreatorData.Checkpoints[#CreatorData.Checkpoints+1] = {
         coords = {
             x = PlayerPos.x,
             y = PlayerPos.y,
