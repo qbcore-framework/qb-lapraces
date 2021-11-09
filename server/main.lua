@@ -1,37 +1,12 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local Races = {}
 local AvailableRaces = {}
 local LastRaces = {}
 local NotFinished = {}
 
-CreateThread(function()
-    local races = exports.oxmysql:executeSync('SELECT * FROM lapraces', {})
-    if races[1] ~= nil then
-        for k, v in pairs(races) do
-            local Records = {}
-            if v.records ~= nil then
-                Records = json.decode(v.records)
-            end
-            Races[v.raceid] = {
-                RaceName = v.name,
-                Checkpoints = json.decode(v.checkpoints),
-                Records = Records,
-                Creator = v.creator,
-                RaceId = v.raceid,
-                Started = false,
-                Waiting = false,
-                Distance = v.distance,
-                LastLeaderboard = {},
-                Racers = {}
-            }
-        end
-    end
-end)
+-- Functions
 
-QBCore.Functions.CreateCallback('qb-lapraces:server:GetRacingLeaderboards', function(source, cb)
-    cb(Races)
-end)
-
-function SecondsToClock(seconds)
+local function SecondsToClock(seconds)
     local seconds = tonumber(seconds)
     local retval = 0
     if seconds <= 0 then
@@ -44,6 +19,88 @@ function SecondsToClock(seconds)
     end
     return retval
 end
+
+local function IsWhitelisted(CitizenId)
+    local retval = false
+    for _, cid in pairs(Config.WhitelistedCreators) do
+        if cid == CitizenId then
+            retval = true
+            break
+        end
+    end
+    local Player = QBCore.Functions.GetPlayerByCitizenId(CitizenId)
+    local Perms = QBCore.Functions.GetPermission(Player.PlayerData.source)
+    if Perms == "admin" or Perms == "god" then
+        retval = true
+    end
+    return retval
+end
+
+local function IsNameAvailable(RaceName)
+    local retval = true
+    for RaceId, _ in pairs(Races) do
+        if Races[RaceId].RaceName == RaceName then
+            retval = false
+            break
+        end
+    end
+    return retval
+end
+
+local function HasOpenedRace(CitizenId)
+    local retval = false
+    for k, v in pairs(AvailableRaces) do
+        if v.SetupCitizenId == CitizenId then
+            retval = true
+        end
+    end
+    return retval
+end
+
+local function GetOpenedRaceKey(RaceId)
+    local retval = nil
+    for k, v in pairs(AvailableRaces) do
+        if v.RaceId == RaceId then
+            retval = k
+            break
+        end
+    end
+    return retval
+end
+
+local function GetCurrentRace(MyCitizenId)
+    local retval = nil
+    for RaceId, _ in pairs(Races) do
+        for cid, _ in pairs(Races[RaceId].Racers) do
+            if cid == MyCitizenId then
+                retval = RaceId
+                break
+            end
+        end
+    end
+    return retval
+end
+
+local function GetRaceId(name)
+    local retval = nil
+    for k, v in pairs(Races) do
+        if v.RaceName == name then
+            retval = k
+            break
+        end
+    end
+    return retval
+end
+
+local function GenerateRaceId()
+    local RaceId = "LR-" .. math.random(1111, 9999)
+    while Races[RaceId] ~= nil do
+        RaceId = "LR-" .. math.random(1111, 9999)
+    end
+    return RaceId
+end
+
+-- Events
 
 RegisterNetEvent('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime, TotalLaps, BestLap)
     local src = source
@@ -137,33 +194,6 @@ RegisterNetEvent('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime
     TriggerClientEvent('qb-phone:client:UpdateLapraces', -1)
 end)
 
-function IsWhitelisted(CitizenId)
-    local retval = false
-    for _, cid in pairs(Config.WhitelistedCreators) do
-        if cid == CitizenId then
-            retval = true
-            break
-        end
-    end
-    local Player = QBCore.Functions.GetPlayerByCitizenId(CitizenId)
-    local Perms = QBCore.Functions.GetPermission(Player.PlayerData.source)
-    if Perms == "admin" or Perms == "god" then
-        retval = true
-    end
-    return retval
-end
-
-function IsNameAvailable(RaceName)
-    local retval = true
-    for RaceId, _ in pairs(Races) do
-        if Races[RaceId].RaceName == RaceName then
-            retval = false
-            break
-        end
-    end
-    return retval
-end
-
 RegisterNetEvent('qb-lapraces:server:CreateLapRace', function(RaceName)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
@@ -178,75 +208,6 @@ RegisterNetEvent('qb-lapraces:server:CreateLapRace', function(RaceName)
         TriggerClientEvent('QBCore:Notify', source, 'You have not been authorized to race\'s to create.', 'error')
     end
 end)
-
-QBCore.Functions.CreateCallback('qb-lapraces:server:GetRaces', function(source, cb)
-    cb(AvailableRaces)
-end)
-
-QBCore.Functions.CreateCallback('qb-lapraces:server:GetListedRaces', function(source, cb)
-    cb(Races)
-end)
-
-QBCore.Functions.CreateCallback('qb-lapraces:server:GetRacingData', function(source, cb, RaceId)
-    cb(Races[RaceId])
-end)
-
-QBCore.Functions.CreateCallback('qb-lapraces:server:HasCreatedRace', function(source, cb)
-    cb(HasOpenedRace(QBCore.Functions.GetPlayer(source).PlayerData.citizenid))
-end)
-
-QBCore.Functions.CreateCallback('qb-lapraces:server:IsAuthorizedToCreateRaces', function(source, cb, TrackName)
-    cb(IsWhitelisted(QBCore.Functions.GetPlayer(source).PlayerData.citizenid), IsNameAvailable(TrackName))
-end)
-
-function HasOpenedRace(CitizenId)
-    local retval = false
-    for k, v in pairs(AvailableRaces) do
-        if v.SetupCitizenId == CitizenId then
-            retval = true
-        end
-    end
-    return retval
-end
-
-QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(source, cb, RaceId)
-    local result = exports.oxmysql:executeSync('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
-    if result[1] ~= nil then
-        result[1].charinfo = json.decode(result[1].charinfo)
-        cb(Races[RaceId], result[1])
-    else
-        cb(Races[RaceId], {
-            charinfo = {
-                firstname = "Unknown",
-                lastname = "Unknown"
-            }
-        })
-    end
-end)
-
-function GetOpenedRaceKey(RaceId)
-    local retval = nil
-    for k, v in pairs(AvailableRaces) do
-        if v.RaceId == RaceId then
-            retval = k
-            break
-        end
-    end
-    return retval
-end
-
-function GetCurrentRace(MyCitizenId)
-    local retval = nil
-    for RaceId, _ in pairs(Races) do
-        for cid, _ in pairs(Races[RaceId].Racers) do
-            if cid == MyCitizenId then
-                retval = RaceId
-                break
-            end
-        end
-    end
-    return retval
-end
 
 RegisterNetEvent('qb-lapraces:server:JoinRace', function(RaceData)
     local src = source
@@ -490,39 +451,52 @@ RegisterNetEvent('qb-lapraces:server:SaveRace', function(RaceData)
          GenerateRaceId()})
 end)
 
-function GetRaceId(name)
-    local retval = nil
-    for k, v in pairs(Races) do
-        if v.RaceName == name then
-            retval = k
-            break
-        end
-    end
-    return retval
-end
+-- Callbacks
 
-function GenerateRaceId()
-    local RaceId = "LR-" .. math.random(1111, 9999)
-    while Races[RaceId] ~= nil do
-        RaceId = "LR-" .. math.random(1111, 9999)
-    end
-    return RaceId
-end
+QBCore.Functions.CreateCallback('qb-lapraces:server:GetRacingLeaderboards', function(source, cb)
+    cb(Races)
+end)
 
-QBCore.Commands.Add("togglesetup", "Turn on / off racing setup", {}, false, function(source, args)
-    local Player = QBCore.Functions.GetPlayer(source)
+QBCore.Functions.CreateCallback('qb-lapraces:server:GetRaces', function(source, cb)
+    cb(AvailableRaces)
+end)
 
-    if IsWhitelisted(Player.PlayerData.citizenid) then
-        Config.RaceSetupAllowed = not Config.RaceSetupAllowed
-        if not Config.RaceSetupAllowed then
-            TriggerClientEvent('QBCore:Notify', source, 'No more races can be created!', 'error')
-        else
-            TriggerClientEvent('QBCore:Notify', source, 'Races can be created again!', 'success')
-        end
+QBCore.Functions.CreateCallback('qb-lapraces:server:GetListedRaces', function(source, cb)
+    cb(Races)
+end)
+
+QBCore.Functions.CreateCallback('qb-lapraces:server:GetRacingData', function(source, cb, RaceId)
+    cb(Races[RaceId])
+end)
+
+QBCore.Functions.CreateCallback('qb-lapraces:server:HasCreatedRace', function(source, cb)
+    cb(HasOpenedRace(QBCore.Functions.GetPlayer(source).PlayerData.citizenid))
+end)
+
+QBCore.Functions.CreateCallback('qb-lapraces:server:IsAuthorizedToCreateRaces', function(source, cb, TrackName)
+    cb(IsWhitelisted(QBCore.Functions.GetPlayer(source).PlayerData.citizenid), IsNameAvailable(TrackName))
+end)
+
+QBCore.Functions.CreateCallback('qb-lapraces:server:CanRaceSetup', function(source, cb)
+    cb(Config.RaceSetupAllowed)
+end)
+
+QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(source, cb, RaceId)
+    local result = exports.oxmysql:executeSync('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
+    if result[1] ~= nil then
+        result[1].charinfo = json.decode(result[1].charinfo)
+        cb(Races[RaceId], result[1])
     else
-        TriggerClientEvent('QBCore:Notify', source, 'You have not been authorized to do this.', 'error')
+        cb(Races[RaceId], {
+            charinfo = {
+                firstname = "Unknown",
+                lastname = "Unknown"
+            }
+        })
     end
 end)
+
+-- Commands
 
 QBCore.Commands.Add("cancelrace", "Cancel going race..", {}, false, function(source, args)
     local Player = QBCore.Functions.GetPlayer(source)
@@ -555,6 +529,43 @@ QBCore.Commands.Add("cancelrace", "Cancel going race..", {}, false, function(sou
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-lapraces:server:CanRaceSetup', function(source, cb)
-    cb(Config.RaceSetupAllowed)
+QBCore.Commands.Add("togglesetup", "Turn on / off racing setup", {}, false, function(source, args)
+    local Player = QBCore.Functions.GetPlayer(source)
+
+    if IsWhitelisted(Player.PlayerData.citizenid) then
+        Config.RaceSetupAllowed = not Config.RaceSetupAllowed
+        if not Config.RaceSetupAllowed then
+            TriggerClientEvent('QBCore:Notify', source, 'No more races can be created!', 'error')
+        else
+            TriggerClientEvent('QBCore:Notify', source, 'Races can be created again!', 'success')
+        end
+    else
+        TriggerClientEvent('QBCore:Notify', source, 'You have not been authorized to do this.', 'error')
+    end
+end)
+
+-- Threads
+
+CreateThread(function()
+    local races = exports.oxmysql:executeSync('SELECT * FROM lapraces', {})
+    if races[1] ~= nil then
+        for k, v in pairs(races) do
+            local Records = {}
+            if v.records ~= nil then
+                Records = json.decode(v.records)
+            end
+            Races[v.raceid] = {
+                RaceName = v.name,
+                Checkpoints = json.decode(v.checkpoints),
+                Records = Records,
+                Creator = v.creator,
+                RaceId = v.raceid,
+                Started = false,
+                Waiting = false,
+                Distance = v.distance,
+                LastLeaderboard = {},
+                Racers = {}
+            }
+        end
+    end
 end)
