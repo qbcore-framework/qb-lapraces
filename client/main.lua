@@ -544,6 +544,25 @@ local function FinishRace()
     RaceData.InRace = false
 end
 
+local function IsInRace()
+    local retval = false
+    if RaceData.InRace then
+        retval = true
+    end
+    return retval
+end
+
+local function IsInEditor()
+    local retval = false
+    if RaceData.InCreator then
+        retval = true
+    end
+    return retval
+end
+
+exports('IsInEditor', IsInEditor)
+exports('IsInRace', IsInRace)
+
 -- Events
 
 RegisterNetEvent('qb-lapraces:client:StartRaceEditor', function(RaceName)

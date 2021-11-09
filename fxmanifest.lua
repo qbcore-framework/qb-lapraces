@@ -18,8 +18,3 @@ files {
     'html/fonts/*.otf',
     'html/img/*'
 }
-
-exports {
-    'IsInRace',
-    'IsInEditor'
-}
