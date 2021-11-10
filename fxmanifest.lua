@@ -18,3 +18,5 @@ files {
     'html/fonts/*.otf',
     'html/img/*'
 }
+
+lua54 'yes'
