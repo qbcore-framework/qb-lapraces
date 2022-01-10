@@ -149,7 +149,7 @@ RegisterNetEvent('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime
                     [2] = Player.PlayerData.charinfo.lastname
                 }
             }
-            exports.oxmysql:execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
+            MySQL.Async.execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
                 {json.encode(Races[RaceData.RaceId].Records), RaceData.RaceId})
             TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
                 ' disconnected with a time of: ' .. SecondsToClock(BLap) .. '!')
@@ -162,7 +162,7 @@ RegisterNetEvent('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime
                 [2] = Player.PlayerData.charinfo.lastname
             }
         }
-        exports.oxmysql:execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
+        MySQL.Async.execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
             {json.encode(Races[RaceData.RaceId].Records), RaceData.RaceId})
         TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
             ' put down with a time of: ' .. SecondsToClock(BLap) .. '!')
@@ -446,7 +446,7 @@ RegisterNetEvent('qb-lapraces:server:SaveRace', function(RaceData)
         Racers = {},
         LastLeaderboard = {}
     }
-    exports.oxmysql:insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (?, ?, ?, ?, ?)',
+    MySQL.Async.insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (?, ?, ?, ?, ?)',
         {RaceData.RaceName, json.encode(Checkpoints), Player.PlayerData.citizenid, RaceData.RaceDistance,
          GenerateRaceId()})
 end)
@@ -482,7 +482,7 @@ QBCore.Functions.CreateCallback('qb-lapraces:server:CanRaceSetup', function(sour
 end)
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(source, cb, RaceId)
-    local result = exports.oxmysql:executeSync('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
+    local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
     if result[1] ~= nil then
         result[1].charinfo = json.decode(result[1].charinfo)
         cb(Races[RaceId], result[1])
@@ -547,7 +547,7 @@ end)
 -- Threads
 
 CreateThread(function()
-    local races = exports.oxmysql:executeSync('SELECT * FROM lapraces', {})
+    local races = MySQL.Sync.fetchAll('SELECT * FROM lapraces', {})
     if races[1] ~= nil then
         for k, v in pairs(races) do
             local Records = {}
