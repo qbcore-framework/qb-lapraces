@@ -544,6 +544,14 @@ local function FinishRace()
     RaceData.InRace = false
 end
 
+local function Info()
+    local PlayerPed = PlayerPedId()
+    local plyVeh = GetVehiclePedIsIn(PlayerPed, false)
+    local IsDriver = GetPedInVehicleSeat(plyVeh, -1) == PlayerPed
+    local returnValue = plyVeh ~= 0 and plyVeh ~= nil and IsDriver
+    return returnValue, plyVeh
+end
+
 local function IsInRace()
     local retval = false
     if RaceData.InRace then
@@ -831,5 +839,21 @@ CreateThread(function()
             SetupPiles()
         end
         Wait(1000)
+    end
+end)
+
+CreateThread(function()
+    while true do
+        local Driver, plyVeh = Info()
+        if Driver then
+            if GetVehicleCurrentGear(plyVeh) < 3 and GetVehicleCurrentRpm(plyVeh) == 1.0 and math.ceil(GetEntitySpeed(plyVeh) * 2.236936) > 50 then
+              while GetVehicleCurrentRpm(plyVeh) > 0.6 do
+                  SetVehicleCurrentRpm(plyVeh, 0.3)
+                  Wait(1)
+              end
+              Wait(800)
+            end
+        end
+        Wait(500)
     end
 end)
