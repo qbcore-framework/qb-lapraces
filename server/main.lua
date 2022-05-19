@@ -149,7 +149,7 @@ RegisterNetEvent('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime
                     [2] = Player.PlayerData.charinfo.lastname
                 }
             }
-            MySQL.Async.execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
+            MySQL.update('UPDATE lapraces SET records = ? WHERE raceid = ?',
                 {json.encode(Races[RaceData.RaceId].Records), RaceData.RaceId})
             TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
                 ' disconnected with a time of: ' .. SecondsToClock(BLap) .. '!')
@@ -162,7 +162,7 @@ RegisterNetEvent('qb-lapraces:server:FinishPlayer', function(RaceData, TotalTime
                 [2] = Player.PlayerData.charinfo.lastname
             }
         }
-        MySQL.Async.execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
+        MySQL.update('UPDATE lapraces SET records = ? WHERE raceid = ?',
             {json.encode(Races[RaceData.RaceId].Records), RaceData.RaceId})
         TriggerClientEvent('qb-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
             ' put down with a time of: ' .. SecondsToClock(BLap) .. '!')
@@ -446,7 +446,7 @@ RegisterNetEvent('qb-lapraces:server:SaveRace', function(RaceData)
         Racers = {},
         LastLeaderboard = {}
     }
-    MySQL.Async.insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (?, ?, ?, ?, ?)',
+    MySQL.insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (?, ?, ?, ?, ?)',
         {RaceData.RaceName, json.encode(Checkpoints), Player.PlayerData.citizenid, RaceData.RaceDistance,
          GenerateRaceId()})
 end)
@@ -482,7 +482,7 @@ QBCore.Functions.CreateCallback('qb-lapraces:server:CanRaceSetup', function(_, c
 end)
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:GetTrackData', function(_, cb, RaceId)
-    local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
+    local result = MySQL.query.await('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
     if result[1] ~= nil then
         result[1].charinfo = json.decode(result[1].charinfo)
         cb(Races[RaceId], result[1])
@@ -547,7 +547,7 @@ end)
 -- Threads
 
 CreateThread(function()
-    local races = MySQL.Sync.fetchAll('SELECT * FROM lapraces', {})
+    local races = MySQL.query.await('SELECT * FROM lapraces', {})
     if races[1] ~= nil then
         for _, v in pairs(races) do
             local Records = {}
