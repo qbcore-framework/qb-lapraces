@@ -53,6 +53,7 @@ function UpdateUI(type, data) {
                 RaceActive = true;
                 $(".editor").hide();
                 $(".race").fadeIn(300);
+                $(".ui").fadeIn(300);
                 $("#race-racename").html('Race: ' + data.data.RaceName);
                 $("#race-checkpoints").html('Checkpoint: ' + data.data.CurrentCheckpoint + ' / ' + data.data.TotalCheckpoints);
                 if (data.data.TotalLaps == 0) {
@@ -87,6 +88,7 @@ function UpdateUI(type, data) {
             RaceActive = false;
             $(".editor").hide();
             $(".race").fadeOut(300);
+            $(".ui").fadeOut(300);
         }
     }
 }

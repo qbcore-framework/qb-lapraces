@@ -15,12 +15,18 @@ body {
 }
 
 .ui {
+    display: none;
+}
+
+.ui {
     position: absolute;
-    width: 30vh;
-    height: 20vh;
-    bottom: 23vh;
+    width: 29vh;
+    height: 21vh;
+    bottom: 25vh;
     border-radius: 1vh;
     left: 2.7vh;
+    background-color: rgb(64 64 64 / 66%);
+    text-shadow: 1px 1px 0px #000000;
 }
 
 .editor {
