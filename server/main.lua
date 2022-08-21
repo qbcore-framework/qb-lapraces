@@ -243,7 +243,7 @@ RegisterNetEvent('qb-lapraces:server:JoinRace', function(RaceData)
         Finished = false
     }
     AvailableRaces[AvailableKey].RaceData = Races[RaceId]
-    TriggerClientEvent('qb-lapraces:client:JoinRace', src, Races[RaceId], RaceData.Laps)
+    TriggerClientEvent('qb-lapraces:client:JoinRace', src, Races[RaceId], AvailableRaces[AvailableKey].Laps)
     TriggerClientEvent('qb-phone:client:UpdateLapraces', -1)
     local creatorsource = QBCore.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData
                               .source
