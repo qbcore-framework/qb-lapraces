@@ -381,6 +381,31 @@ RegisterNetEvent('qb-lapraces:server:SetupRace', function(RaceId, Laps)
     end
 end)
 
+RegisterNetEvent('qb-lapraces:server:CancelRace', function(raceId)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(source)
+    local AvailableKey = GetOpenedRaceKey(RaceId)
+
+    if AvailableRaces[AvailableKey].SetupCitizenId == Player.PlayerData.citizenid then
+        local AvailableKey = GetOpenedRaceKey(RaceId)
+
+        for cid, _ in pairs(Races[RaceId].Racers) do
+            local RacerData = QBCore.Functions.GetPlayerByCitizenId(cid)
+            if RacerData ~= nil then
+                TriggerClientEvent('qb-lapraces:client:LeaveRace', RacerData.PlayerData.source, Races[RaceId])
+            end
+        end
+
+        table.remove(AvailableRaces, AvailableKey)
+        Races[RaceId].LastLeaderboard = {}
+        Races[RaceId].Racers = {}
+        Races[RaceId].Started = false
+        Races[RaceId].Waiting = false
+        LastRaces[RaceId] = nil
+        TriggerClientEvent('qb-phone:client:UpdateLapraces', -1)
+    end
+end)
+
 RegisterNetEvent('qb-lapraces:server:UpdateRaceState', function(RaceId, Started, Waiting)
     Races[RaceId].Waiting = Waiting
     Races[RaceId].Started = Started
