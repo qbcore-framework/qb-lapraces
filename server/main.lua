@@ -459,7 +459,8 @@ RegisterNetEvent('qb-lapraces:server:SaveRace', function(RaceData)
     for k, v in pairs(RaceData.Checkpoints) do
         Checkpoints[k] = {
             offset = v.offset,
-            coords = v.coords
+            coords = v.coords,
+            propName = v.propName or "prop_offroad_tyres02",
         }
     end
     Races[RaceId] = {
