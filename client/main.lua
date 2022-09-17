@@ -69,16 +69,6 @@ AddEventHandler('onResourceStop', function(resource)
 end)
 
 -- Functions
-
-local function IsInRace()
-    local retval = false
-    if RaceData.InRace then
-        retval = true
-    end
-    return retval
-end
-exports('IsInRace', IsInRace)
-
 local function DrawText3Ds(x, y, z, text)
 	SetTextScale(0.35, 0.35)
     SetTextFont(4)

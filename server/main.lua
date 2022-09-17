@@ -30,7 +30,7 @@ local function IsWhitelisted(CitizenId)
     end
     local Player = QBCore.Functions.GetPlayerByCitizenId(CitizenId)
     local Perms = QBCore.Functions.GetPermission(Player.PlayerData.source)
-    if Perms == "god" then
+    if Perms == "admin" or Perms == "god" then
         retval = true
     end
     return retval
