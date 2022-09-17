@@ -70,6 +70,15 @@ end)
 
 -- Functions
 
+local function IsInRace()
+    local retval = false
+    if RaceData.InRace then
+        retval = true
+    end
+    return retval
+end
+exports('IsInRace', IsInRace)
+
 local function DrawText3Ds(x, y, z, text)
 	SetTextScale(0.35, 0.35)
     SetTextFont(4)
@@ -159,10 +168,10 @@ local function DeleteCheckpoint()
             end
             CreatorData.Checkpoints = NewCheckpoints
         else
-            QBCore.Functions.Notify('You cant go to fast', 'error')
+            QBCore.Functions.Notify(Lang:t('error.toofast'), 'error')
         end
     else
-        QBCore.Functions.Notify('You cant go too fast', 'error')
+        QBCore.Functions.Notify(Lang:t('error.toofast'), 'error')
     end
 end
 
@@ -180,7 +189,7 @@ local function SaveRace()
 
     TriggerServerEvent('qb-lapraces:server:SaveRace', CreatorData)
 
-    QBCore.Functions.Notify('Race: '..CreatorData.RaceName..' is saved!', 'success')
+    QBCore.Functions.Notify(Lang:t('success.savedrace', {racename = CreatorData.RaceName}), 'success')
 
     for id,_ in pairs(CreatorData.Checkpoints) do
         if CreatorData.Checkpoints[id].blip ~= nil then
@@ -272,7 +281,7 @@ local function CreatorLoop()
                     if CreatorData.Checkpoints ~= nil and next(CreatorData.Checkpoints) ~= nil then
                         DeleteCheckpoint()
                     else
-                        QBCore.Functions.Notify('You have not placed any checkpoints yet..', 'error')
+                        QBCore.Functions.Notify(Lang:t('error.nocheckpoints'), 'error')
                     end
                 end
 
@@ -280,7 +289,7 @@ local function CreatorLoop()
                     if CreatorData.Checkpoints ~= nil and #CreatorData.Checkpoints >= 2 then
                         SaveRace()
                     else
-                        QBCore.Functions.Notify('You must have at least 10 checkpoints', 'error')
+                        QBCore.Functions.Notify(Lang:t('error.atleast10checkp'), 'error')
                     end
                 end
 
@@ -288,7 +297,7 @@ local function CreatorLoop()
                     if CreatorData.TireDistance + 1.0 ~= 16.0 then
                         CreatorData.TireDistance = CreatorData.TireDistance + 1.0
                     else
-                        QBCore.Functions.Notify('You can not go higher than 15')
+                        QBCore.Functions.Notify(Lang:t('error.higherthan15'), 'error')
                     end
                 end
 
@@ -296,18 +305,18 @@ local function CreatorLoop()
                     if CreatorData.TireDistance - 1.0 ~= 1.0 then
                         CreatorData.TireDistance = CreatorData.TireDistance - 1.0
                     else
-                        QBCore.Functions.Notify('You cannot go lower than 2')
+                        QBCore.Functions.Notify(Lang:t('error.lowerthan2'), 'error')
                     end
                 end
             else
                 local coords = GetEntityCoords(PlayerPedId())
-                DrawText3Ds(coords.x, coords.y, coords.z, 'You must be in a vehicle')
+                DrawText3Ds(coords.x, coords.y, coords.z, Lang:t('error.mustbeinveh'))
             end
 
             if IsControlJustPressed(0, 163) or IsDisabledControlJustPressed(0, 163) then
                 if not CreatorData.ConfirmDelete then
                     CreatorData.ConfirmDelete = true
-                    QBCore.Functions.Notify('Press [9] again to confirm', 'error', 5000)
+                    QBCore.Functions.Notify(Lang:t('error.pressagain'), 'error', 5000)
                 else
                     for _, CheckpointData in pairs(CreatorData.Checkpoints) do
                         if CheckpointData.blip ~= nil then
@@ -336,7 +345,7 @@ local function CreatorLoop()
                     RaceData.InCreator = false
                     CreatorData.RaceName = nil
                     CreatorData.Checkpoints = {}
-                    QBCore.Functions.Notify('Race-editor canceled!', 'error')
+                    QBCore.Functions.Notify(Lang:t('error.editorcancelled'), 'error')
                     CreatorData.ConfirmDelete = false
                 end
             end
@@ -507,9 +516,9 @@ end
 local function FinishRace()
     TriggerServerEvent('qb-lapraces:server:FinishPlayer', CurrentRaceData, CurrentRaceData.TotalTime, CurrentRaceData.TotalLaps, CurrentRaceData.BestLap)
     if CurrentRaceData.BestLap ~= 0 then
-        QBCore.Functions.Notify('Race finished in '..SecondsToClock(CurrentRaceData.TotalTime)..', with the best lap: '..SecondsToClock(CurrentRaceData.BestLap))
+        QBCore.Functions.Notify(Lang:t('success.finishedbest', {time = SecondsToClock(CurrentRaceData.TotalTime), best = SecondsToClock(CurrentRaceData.BestLap)}))
     else
-        QBCore.Functions.Notify('Race finished in '..SecondsToClock(CurrentRaceData.TotalTime))
+        QBCore.Functions.Notify(Lang:t('success.finished', {time = SecondsToClock(CurrentRaceData.TotalTime)}))
     end
     for k, _ in pairs(CurrentRaceData.Checkpoints) do
         if CurrentRaceData.Checkpoints[k].blip ~= nil then
@@ -580,7 +589,7 @@ RegisterNetEvent('qb-lapraces:client:StartRaceEditor', function(RaceName)
         CreatorUI()
         CreatorLoop()
     else
-        QBCore.Functions.Notify('You are already making a race.', 'error')
+        QBCore.Functions.Notify(Lang:t('error.alreadymaking'), 'error')
     end
 end)
 
@@ -596,12 +605,12 @@ RegisterNetEvent('qb-lapraces:client:JoinRace', function(Data, Laps)
         SetupRace(Data, Laps)
         TriggerServerEvent('qb-lapraces:server:UpdateRaceState', CurrentRaceData.RaceId, false, true)
     else
-        QBCore.Functions.Notify('Youre already in a race..', 'error')
+        QBCore.Functions.Notify(Lang:t('error.alreadyinrace'), 'error')
     end
 end)
 
 RegisterNetEvent('qb-lapraces:client:LeaveRace', function(_)
-    QBCore.Functions.Notify('You have completed the race!')
+    QBCore.Functions.Notify(Lang:t('primary.LeaveRace'))
     for k, _ in pairs(CurrentRaceData.Checkpoints) do
         if CurrentRaceData.Checkpoints[k].blip ~= nil then
             RemoveBlip(CurrentRaceData.Checkpoints[k].blip)
@@ -642,7 +651,7 @@ RegisterNetEvent('qb-lapraces:client:RaceCountdown', function()
         while Countdown ~= 0 do
             if CurrentRaceData.RaceName ~= nil then
                 if Countdown == 10 then
-                    QBCore.Functions.Notify('The race will start in 10 seconds', 'error', 2500)
+                    QBCore.Functions.Notify(Lang:t('primary.startinten'), 'primary', 2500)
                     PlaySound(-1, "slow", "SHORT_PLAYER_SWITCH_SOUND_SET", 0, 0, 1)
                 elseif Countdown <= 5 then
                     QBCore.Functions.Notify(Countdown, 'error', 500)
@@ -657,7 +666,7 @@ RegisterNetEvent('qb-lapraces:client:RaceCountdown', function()
         end
         if CurrentRaceData.RaceName ~= nil then
             SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
-            QBCore.Functions.Notify('GO!', 'success', 1000)
+            QBCore.Functions.Notify(Lang:t('success.start'), 'success', 1000)
             SetBlipScale(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].blip, 1.0)
             FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), true), false)
             DoPilePfx()
@@ -668,14 +677,14 @@ RegisterNetEvent('qb-lapraces:client:RaceCountdown', function()
             Countdown = 10
         end
     else
-        QBCore.Functions.Notify('You are not currently in a race..', 'error')
+        QBCore.Functions.Notify(Lang:t('error.notinarace'), 'error')
     end
 end)
 
 RegisterNetEvent('qb-lapraces:client:PlayerFinishs', function(RaceId, Place, FinisherData)
     if CurrentRaceData.RaceId ~= nil then
         if CurrentRaceData.RaceId == RaceId then
-            QBCore.Functions.Notify(FinisherData.PlayerData.charinfo.firstname..' is finished on spot: '..Place, 'error', 3500)
+            QBCore.Functions.Notify(Lang:t('error.playerfinished', {firstname = FinisherData.PlayerData.charinfo.firstname, spot = Place}), 'error', 3500)
         end
     end
 end)
@@ -693,7 +702,7 @@ RegisterNetEvent('qb-lapraces:client:WaitingDistanceCheck', function()
                     if dist > 115.0 then
                         if ToFarCountdown ~= 0 then
                             ToFarCountdown = ToFarCountdown - 1
-                            QBCore.Functions.Notify('Go back to the start or you will be kicked from the race: '..ToFarCountdown..'s', 'error', 500)
+                            QBCore.Functions.Notify(Lang:t('error.gobackorkick', {seconds = ToFarCountdown}), 'error', 500)
                         else
                             TriggerServerEvent('qb-lapraces:server:LeaveRace', CurrentRaceData)
                             ToFarCountdown = 10
@@ -736,8 +745,8 @@ CreateThread(function()
                     }
                 }
 
-                DrawText3Ds(Offset.left.x, Offset.left.y, Offset.left.z, 'Checkpoint L')
-                DrawText3Ds(Offset.right.x, Offset.right.y, Offset.right.z, 'Checkpoint R')
+                DrawText3Ds(Offset.left.x, Offset.left.y, Offset.left.z, Lang:t('general.CheckL'))
+                DrawText3Ds(Offset.right.x, Offset.right.y, Offset.right.z, Lang:t('general.CheckR'))
             end
         end
         Wait(3)
@@ -784,6 +793,11 @@ CreateThread(function()
                             if CurrentRaceData.Lap + 1 > CurrentRaceData.TotalLaps then
                                 DoPilePfx()
                                 PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
+                                if CurrentRaceData.RaceTime < CurrentRaceData.BestLap then
+                                    CurrentRaceData.BestLap = CurrentRaceData.RaceTime
+                                elseif CurrentRaceData.BestLap == 0 then
+                                    CurrentRaceData.BestLap = CurrentRaceData.RaceTime
+                                end
                                 CurrentRaceData.CurrentCheckpoint = CurrentRaceData.CurrentCheckpoint + 1
                                 TriggerServerEvent('qb-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, true)
                                 FinishRace()
