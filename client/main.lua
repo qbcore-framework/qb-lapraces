@@ -542,6 +542,9 @@ local function FinishRace()
     CurrentRaceData.BestLap = 0
     CurrentRaceData.RaceId = nil
     RaceData.InRace = false
+    SetGpsMultiRouteRender(false)
+    ClearGpsMultiRoute()
+    DeleteWaypoint()
 end
 
 local function Info()
@@ -634,7 +637,27 @@ RegisterNetEvent('qb-lapraces:client:LeaveRace', function(_)
     CurrentRaceData.RaceId = nil
     RaceData.InRace = false
     FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), false), false)
+    SetGpsMultiRouteRender(false)
+    ClearGpsMultiRoute()
+    DeleteWaypoint()
 end)
+
+local function SetRoute(data, laps)
+    SetGpsMultiRouteRender(false)
+    ClearGpsMultiRoute()
+    StartGpsMultiRoute(21, false, true)
+    for i,v in ipairs(data) do
+        AddPointToGpsMultiRoute(data[i].coords.x, data[i].coords.y, data[i].coords.z)
+    end
+    if laps > 1 then 
+        AddPointToGpsMultiRoute(data[1].coords.x, data[1].coords.y, data[1].coords.z)
+        AddPointToGpsMultiRoute(data[2].coords.x, data[2].coords.y, data[2].coords.z)
+        AddPointToGpsMultiRoute(data[3].coords.x, data[3].coords.y, data[3].coords.z)
+        AddPointToGpsMultiRoute(data[4].coords.x, data[1].coords.y, data[4].coords.z)
+        AddPointToGpsMultiRoute(data[5].coords.x, data[1].coords.y, data[5].coords.z)
+    end
+    SetGpsMultiRouteRender(true)
+end
 
 RegisterNetEvent('qb-lapraces:client:RaceCountdown', function()
     TriggerServerEvent('qb-lapraces:server:UpdateRaceState', CurrentRaceData.RaceId, true, false)
@@ -656,7 +679,7 @@ RegisterNetEvent('qb-lapraces:client:RaceCountdown', function()
             Wait(1000)
         end
         if CurrentRaceData.RaceName ~= nil then
-            SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
+            SetRoute(CurrentRaceData.Checkpoints, CurrentRaceData.TotalLaps)
             QBCore.Functions.Notify('GO!', 'success', 1000)
             SetBlipScale(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].blip, 1.0)
             FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), true), false)
@@ -799,6 +822,7 @@ CreateThread(function()
                                 CurrentRaceData.Lap = CurrentRaceData.Lap + 1
                                 CurrentRaceData.CurrentCheckpoint = 1
                                 SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
+                                SetRoute(CurrentRaceData.Checkpoints, CurrentRaceData.TotalLaps)
                                 TriggerServerEvent('qb-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
                             end
                         else
