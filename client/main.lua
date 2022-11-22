@@ -646,10 +646,10 @@ local function SetRoute(data, laps)
     SetGpsMultiRouteRender(false)
     ClearGpsMultiRoute()
     StartGpsMultiRoute(Config.RouteColor, false, true)
-    for i,v in ipairs(data) do
+    for i in ipairs(data) do
         AddPointToGpsMultiRoute(data[i].coords.x, data[i].coords.y, data[i].coords.z)
     end
-    if laps > 1 then 
+    if laps > 1 then
         AddPointToGpsMultiRoute(data[1].coords.x, data[1].coords.y, data[1].coords.z)
         AddPointToGpsMultiRoute(data[2].coords.x, data[2].coords.y, data[2].coords.z)
         AddPointToGpsMultiRoute(data[3].coords.x, data[3].coords.y, data[3].coords.z)
