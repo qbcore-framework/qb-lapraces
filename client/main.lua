@@ -645,7 +645,7 @@ end)
 local function SetRoute(data, laps)
     SetGpsMultiRouteRender(false)
     ClearGpsMultiRoute()
-    StartGpsMultiRoute(21, false, true)
+    StartGpsMultiRoute(Config.RouteColor, false, true)
     for i,v in ipairs(data) do
         AddPointToGpsMultiRoute(data[i].coords.x, data[i].coords.y, data[i].coords.z)
     end
