@@ -503,11 +503,7 @@ QBCore.Functions.CreateCallback('qb-lapraces:server:HasCreatedRace', function(so
 end)
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:IsAuthorizedToCreateRaces', function(source, cb, TrackName)
-    if Config.UseWL then
-        cb(IsWhitelisted(QBCore.Functions.GetPlayer(source).PlayerData.citizenid), IsNameAvailable(TrackName))
-    else
-        cb(true, IsNameAvailable(TrackName))
-    end
+    cb(IsWhitelisted(QBCore.Functions.GetPlayer(source).PlayerData.citizenid), IsNameAvailable(TrackName))
 end)
 
 QBCore.Functions.CreateCallback('qb-lapraces:server:CanRaceSetup', function(_, cb)
