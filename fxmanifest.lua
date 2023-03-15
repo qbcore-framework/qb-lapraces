@@ -19,8 +19,6 @@ files {
     'html/*.html',
     'html/*.css',
     'html/*.js',
-    'html/fonts/*.otf',
-    'html/img/*'
 }
 
 lua54 'yes'
