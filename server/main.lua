@@ -476,7 +476,7 @@ RegisterNetEvent('qb-lapraces:server:SaveRace', function(RaceData)
     }
     MySQL.insert('INSERT INTO lapraces (name, checkpoints, creator, distance, raceid) VALUES (?, ?, ?, ?, ?)',
         {RaceData.RaceName, json.encode(Checkpoints), Player.PlayerData.citizenid, RaceData.RaceDistance,
-         GenerateRaceId()})
+            RaceId )})
 end)
 
 -- Callbacks
