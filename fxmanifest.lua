@@ -1,7 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
-
-description 'QB-LapRaces'
+lua54 'yes'
+author 'Kakarot'
+description 'Allows players to create vehicle races to compete in for money'
 version '1.2.0'
 
 ui_page 'html/index.html'
@@ -21,5 +22,3 @@ files {
     'html/*.js',
     'html/img/*'
 }
-
-lua54 'yes'
