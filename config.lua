@@ -1,7 +1,6 @@
-Config = Config or {}
-
-Config.WhitelistedCreators = {
-    "PUTCID",
+Config = {
+    WhitelistedCreators = {
+        'PUTCID',
+    },
+    RaceSetupAllowed = true
 }
-
-Config.RaceSetupAllowed = true

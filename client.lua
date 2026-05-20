@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject({ 'Functions' })
 local Countdown = 10
 local ToFarCountdown = 10
 local FinishedUITimeout = false
@@ -71,17 +71,17 @@ end)
 -- Functions
 
 local function DrawText3Ds(x, y, z, text)
-	SetTextScale(0.35, 0.35)
+    SetTextScale(0.35, 0.35)
     SetTextFont(4)
     SetTextProportional(1)
     SetTextColour(255, 255, 255, 215)
-    BeginTextCommandDisplayText("STRING")
+    BeginTextCommandDisplayText('STRING')
     SetTextCentre(true)
     AddTextComponentSubstringPlayerName(text)
-    SetDrawOrigin(x,y,z, 0)
+    SetDrawOrigin(x, y, z, 0)
     EndTextCommandDisplayText(0.0, 0.0)
     local factor = (string.len(text)) / 370
-    DrawRect(0.0, 0.0+0.0125, 0.017+ factor, 0.03, 0, 0, 0, 75)
+    DrawRect(0.0, 0.0 + 0.0125, 0.017 + factor, 0.03, 0, 0, 0, 75)
     ClearDrawOrigin()
 end
 
@@ -108,16 +108,16 @@ local function CreatorUI()
         while true do
             if RaceData.InCreator then
                 SendNUIMessage({
-                    action = "Update",
-                    type = "creator",
+                    action = 'Update',
+                    type = 'creator',
                     data = CreatorData,
                     racedata = RaceData,
                     active = true,
                 })
             else
                 SendNUIMessage({
-                    action = "Update",
-                    type = "creator",
+                    action = 'Update',
+                    type = 'creator',
                     data = CreatorData,
                     racedata = RaceData,
                     active = false,
@@ -154,7 +154,7 @@ local function DeleteCheckpoint()
 
             for id, data in pairs(CreatorData.Checkpoints) do
                 if id ~= RaceData.ClosestCheckpoint then
-                    NewCheckpoints[#NewCheckpoints+1] = data
+                    NewCheckpoints[#NewCheckpoints + 1] = data
                 end
             end
             CreatorData.Checkpoints = NewCheckpoints
@@ -180,9 +180,9 @@ local function SaveRace()
 
     TriggerServerEvent('qb-lapraces:server:SaveRace', CreatorData)
 
-    QBCore.Functions.Notify('Race: '..CreatorData.RaceName..' is saved!', 'success')
+    QBCore.Functions.Notify('Race: ' .. CreatorData.RaceName .. ' is saved!', 'success')
 
-    for id,_ in pairs(CreatorData.Checkpoints) do
+    for id, _ in pairs(CreatorData.Checkpoints) do
         if CreatorData.Checkpoints[id].blip ~= nil then
             RemoveBlip(CreatorData.Checkpoints[id].blip)
             CreatorData.Checkpoints[id].blip = nil
@@ -227,7 +227,7 @@ local function AddCheckpoint()
         }
     }
 
-    CreatorData.Checkpoints[#CreatorData.Checkpoints+1] = {
+    CreatorData.Checkpoints[#CreatorData.Checkpoints + 1] = {
         coords = {
             x = PlayerPos.x,
             y = PlayerPos.y,
@@ -251,8 +251,8 @@ local function AddCheckpoint()
         SetBlipColour(CheckpointData.blip, 26)
         ShowNumberOnBlip(CheckpointData.blip, id)
         SetBlipShowCone(CheckpointData.blip, false)
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentSubstringPlayerName("Checkpoint: "..id)
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentSubstringPlayerName('Checkpoint: ' .. id)
         EndTextCommandSetBlipName(CheckpointData.blip)
     end
 end
@@ -315,7 +315,7 @@ local function CreatorLoop()
                         end
                     end
 
-                    for id,_ in pairs(CreatorData.Checkpoints) do
+                    for id, _ in pairs(CreatorData.Checkpoints) do
                         if CreatorData.Checkpoints[id].pileleft ~= nil then
                             local coords = CreatorData.Checkpoints[id].offset.left
                             local Obj = GetClosestObjectOfType(coords.x, coords.y, coords.z, 8.0, `prop_offroad_tyres02`, 0, 0, 0)
@@ -354,8 +354,8 @@ local function RaceUI()
                     CurrentRaceData.TotalTime = CurrentRaceData.TotalTime + 1
                 end
                 SendNUIMessage({
-                    action = "Update",
-                    type = "race",
+                    action = 'Update',
+                    type = 'race',
                     data = {
                         CurrentCheckpoint = CurrentRaceData.CurrentCheckpoint,
                         TotalCheckpoints = #CurrentRaceData.Checkpoints,
@@ -376,8 +376,8 @@ local function RaceUI()
                     SetTimeout(10000, function()
                         FinishedUITimeout = false
                         SendNUIMessage({
-                            action = "Update",
-                            type = "race",
+                            action = 'Update',
+                            type = 'race',
                             data = {},
                             racedata = RaceData,
                             active = false,
@@ -428,8 +428,8 @@ local function SetupRace(sRaceData, Laps)
         SetBlipAsShortRange(CurrentRaceData.Checkpoints[k].blip, true)
         SetBlipColour(CurrentRaceData.Checkpoints[k].blip, 26)
         ShowNumberOnBlip(CurrentRaceData.Checkpoints[k].blip, k)
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentSubstringPlayerName("Checkpoint: "..k)
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentSubstringPlayerName('Checkpoint: ' .. k)
         EndTextCommandSetBlipName(CurrentRaceData.Checkpoints[k].blip)
     end
 
@@ -443,7 +443,7 @@ local function showNonLoopParticle(dict, particleName, coords, scale)
     end
     UseParticleFxAssetNextCall(dict)
     local particleHandle = StartParticleFxLoopedAtCoord(particleName, coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, scale, false, false, false)
-    SetParticleFxLoopedColour(particleHandle, 0, 255, 0 ,0)
+    SetParticleFxLoopedColour(particleHandle, 0, 255, 0, 0)
     return particleHandle
 end
 
@@ -494,12 +494,12 @@ local function SecondsToClock(seconds)
     seconds = tonumber(seconds)
     local retval
     if seconds <= 0 then
-        retval = "00:00:00";
+        retval = '00:00:00';
     else
-        local hours = string.format("%02.f", math.floor(seconds/3600));
-        local mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
-        local secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
-        retval = hours..":"..mins..":"..secs
+        local hours = string.format('%02.f', math.floor(seconds / 3600));
+        local mins = string.format('%02.f', math.floor(seconds / 60 - (hours * 60)));
+        local secs = string.format('%02.f', math.floor(seconds - hours * 3600 - mins * 60));
+        retval = hours .. ':' .. mins .. ':' .. secs
     end
     return retval
 end
@@ -507,9 +507,9 @@ end
 local function FinishRace()
     TriggerServerEvent('qb-lapraces:server:FinishPlayer', CurrentRaceData, CurrentRaceData.TotalTime, CurrentRaceData.TotalLaps, CurrentRaceData.BestLap)
     if CurrentRaceData.BestLap ~= 0 then
-        QBCore.Functions.Notify('Race finished in '..SecondsToClock(CurrentRaceData.TotalTime)..', with the best lap: '..SecondsToClock(CurrentRaceData.BestLap))
+        QBCore.Functions.Notify('Race finished in ' .. SecondsToClock(CurrentRaceData.TotalTime) .. ', with the best lap: ' .. SecondsToClock(CurrentRaceData.BestLap))
     else
-        QBCore.Functions.Notify('Race finished in '..SecondsToClock(CurrentRaceData.TotalTime))
+        QBCore.Functions.Notify('Race finished in ' .. SecondsToClock(CurrentRaceData.TotalTime))
     end
     for k, _ in pairs(CurrentRaceData.Checkpoints) do
         if CurrentRaceData.Checkpoints[k].blip ~= nil then
@@ -643,10 +643,10 @@ RegisterNetEvent('qb-lapraces:client:RaceCountdown', function()
             if CurrentRaceData.RaceName ~= nil then
                 if Countdown == 10 then
                     QBCore.Functions.Notify('The race will start in 10 seconds', 'error', 2500)
-                    PlaySound(-1, "slow", "SHORT_PLAYER_SWITCH_SOUND_SET", 0, 0, 1)
+                    PlaySound(-1, 'slow', 'SHORT_PLAYER_SWITCH_SOUND_SET', 0, 0, 1)
                 elseif Countdown <= 5 then
                     QBCore.Functions.Notify(Countdown, 'error', 500)
-                    PlaySound(-1, "slow", "SHORT_PLAYER_SWITCH_SOUND_SET", 0, 0, 1)
+                    PlaySound(-1, 'slow', 'SHORT_PLAYER_SWITCH_SOUND_SET', 0, 0, 1)
                 end
                 Countdown = Countdown - 1
                 FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), true), true)
@@ -675,7 +675,7 @@ end)
 RegisterNetEvent('qb-lapraces:client:PlayerFinishs', function(RaceId, Place, FinisherData)
     if CurrentRaceData.RaceId ~= nil then
         if CurrentRaceData.RaceId == RaceId then
-            QBCore.Functions.Notify(FinisherData.PlayerData.charinfo.firstname..' is finished on spot: '..Place, 'error', 3500)
+            QBCore.Functions.Notify(FinisherData.PlayerData.charinfo.firstname .. ' is finished on spot: ' .. Place, 'error', 3500)
         end
     end
 end)
@@ -693,7 +693,7 @@ RegisterNetEvent('qb-lapraces:client:WaitingDistanceCheck', function()
                     if dist > 115.0 then
                         if ToFarCountdown ~= 0 then
                             ToFarCountdown = ToFarCountdown - 1
-                            QBCore.Functions.Notify('Go back to the start or you will be kicked from the race: '..ToFarCountdown..'s', 'error', 500)
+                            QBCore.Functions.Notify('Go back to the start or you will be kicked from the race: ' .. ToFarCountdown .. 's', 'error', 500)
                         else
                             TriggerServerEvent('qb-lapraces:server:LeaveRace', CurrentRaceData)
                             ToFarCountdown = 10
@@ -746,7 +746,6 @@ end)
 
 CreateThread(function()
     while true do
-
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
 
@@ -769,12 +768,12 @@ CreateThread(function()
                             SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
                             TriggerServerEvent('qb-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
                             DoPilePfx()
-                            PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
+                            PlaySound(-1, 'SELECT', 'HUD_FRONTEND_DEFAULT_SOUNDSET', 0, 0, 1)
                             SetBlipScale(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint].blip, 0.6)
                             SetBlipScale(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].blip, 1.0)
                         else
                             DoPilePfx()
-                            PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
+                            PlaySound(-1, 'SELECT', 'HUD_FRONTEND_DEFAULT_SOUNDSET', 0, 0, 1)
                             CurrentRaceData.CurrentCheckpoint = CurrentRaceData.CurrentCheckpoint + 1
                             TriggerServerEvent('qb-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, true)
                             FinishRace()
@@ -783,13 +782,13 @@ CreateThread(function()
                         if CurrentRaceData.CurrentCheckpoint + 1 > #CurrentRaceData.Checkpoints then
                             if CurrentRaceData.Lap + 1 > CurrentRaceData.TotalLaps then
                                 DoPilePfx()
-                                PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
+                                PlaySound(-1, 'SELECT', 'HUD_FRONTEND_DEFAULT_SOUNDSET', 0, 0, 1)
                                 CurrentRaceData.CurrentCheckpoint = CurrentRaceData.CurrentCheckpoint + 1
                                 TriggerServerEvent('qb-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, true)
                                 FinishRace()
                             else
                                 DoPilePfx()
-                                PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
+                                PlaySound(-1, 'SELECT', 'HUD_FRONTEND_DEFAULT_SOUNDSET', 0, 0, 1)
                                 if CurrentRaceData.RaceTime < CurrentRaceData.BestLap then
                                     CurrentRaceData.BestLap = CurrentRaceData.RaceTime
                                 elseif CurrentRaceData.BestLap == 0 then
@@ -815,7 +814,7 @@ CreateThread(function()
                                 SetBlipScale(CurrentRaceData.Checkpoints[1].blip, 1.0)
                             end
                             DoPilePfx()
-                            PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
+                            PlaySound(-1, 'SELECT', 'HUD_FRONTEND_DEFAULT_SOUNDSET', 0, 0, 1)
                         end
                     end
                 end
@@ -847,11 +846,11 @@ CreateThread(function()
         local Driver, plyVeh = Info()
         if Driver then
             if GetVehicleCurrentGear(plyVeh) < 3 and GetVehicleCurrentRpm(plyVeh) == 1.0 and math.ceil(GetEntitySpeed(plyVeh) * 2.236936) > 50 then
-              while GetVehicleCurrentRpm(plyVeh) > 0.6 do
-                  SetVehicleCurrentRpm(plyVeh, 0.3)
-                  Wait(1)
-              end
-              Wait(800)
+                while GetVehicleCurrentRpm(plyVeh) > 0.6 do
+                    SetVehicleCurrentRpm(plyVeh, 0.3)
+                    Wait(1)
+                end
+                Wait(800)
             end
         end
         Wait(500)
